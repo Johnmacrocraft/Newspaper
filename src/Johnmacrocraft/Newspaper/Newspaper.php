@@ -49,7 +49,7 @@ class Newspaper extends PluginBase implements Listener {
 	private $baseLang_jpn;
 
 	public function onEnable() : void {
-		SpoonDetector::printSpoon($this);
+		SpoonDetector::printSpoon($this, "spoon.txt");
 
 		$this->dataFolder = $this->getDataFolder();
 
