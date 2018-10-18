@@ -1,0 +1,70 @@
+name: Newspaper
+main: Johnmacrocraft\Newspaper\Newspaper
+version: 1.0.0
+api: [3.3.0]
+load: POSTWORLD
+softDepend: [EconomyAPI]
+author: Johnmacrocraft
+description: A newspaper plugin which is inspired from Bunbunmaru Newspaper (文々。新聞) by Shameimaru Aya (射命丸 文).
+website: https://github.com/Johnmacrocraft/Newspaper
+commands:
+  newspaper:
+    description: Opens Newspaper GUI
+    usage: /newspaper
+    permission: newspaper.command.newspaper
+permissions:
+  newspaper:
+    description: Allows using all Newspaper permissions
+    default: op
+    children:
+      newspaper.command:
+        description: Allows using all Newspaper commands
+        default: op
+        children:
+          newspaper.command.newspaper:
+            description: Allows using newspaper command
+            default: op
+      newspaper.gui:
+        description: Allows using all features in Newspaper GUI
+        default: op
+        children:
+          newspaper.gui.create:
+            description: Allows creating newspapers
+            default: op
+            children:
+              newspaper.gui.create.new:
+                description: Allows creating new newspapers
+                default: op
+              newspaper.gui.create.publish:
+                description: Allows publishing newspapers
+                default: op
+          newspaper.gui.buy:
+            description: Allows buying newspapers
+            default: op
+            children:
+              newspaper.gui.buy.one:
+                description: Allows buying one or more newspapers
+              newspaper.gui.buy.subscribe:
+                description: Allows subscribing to newspapers
+                default: op
+          newspaper.gui.manage:
+            description: Allows managing newspapers
+            default: op
+            children:
+              newspaper.gui.manage.edit:
+                description: Allows editing newspapers
+                default: op
+          newspaper.gui.settings:
+            description: Allows managing settings and subscriptions
+            default: op
+            children:
+              newspaper.gui.settings.settings:
+                description: Allows managing settings
+                default: op
+          newspaper.gui.subscriptions:
+            description: Allows checking subscriptions
+            default: op
+            children:
+              newspaper.gui.subscriptions.unsubscribe:
+                description: Allows unsubscribing from newspapers
+                default: op
