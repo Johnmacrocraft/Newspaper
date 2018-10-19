@@ -333,6 +333,16 @@ class Newspaper extends PluginBase implements Listener {
 	 * @return array
 	 */
 	public function getLanguageList() : array {
-		return glob($this->getLanguageFolder() . "*.ini");
+		$langList = []; //From PocketMine
+		if(is_dir($this->getLanguageFolder())) {
+			foreach(new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($this->getFile() . "resources/lang/")) as $langPath) {
+				if($langPath->isFile()) {
+					$path = str_replace(DIRECTORY_SEPARATOR, "/", substr((string) $langPath, strlen($this->getFile() . "resources/lang/")));
+					$langList[$path] = $langPath;
+				}
+			}
+		}
+
+		return $langList;
 	}
 }
