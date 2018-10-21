@@ -5,7 +5,7 @@ api: [3.3.0]
 load: POSTWORLD
 softDepend: [EconomyAPI]
 author: Johnmacrocraft
-description: A newspaper plugin which adds newspapers to your server
+description: A plugin which adds newspapers to your server
 website: https://github.com/Johnmacrocraft/Newspaper
 commands:
   newspaper:
