@@ -38,8 +38,6 @@ class ManageForm extends MenuForm {
 	}
 
 	public function onSubmit(Player $player, int $selectedOption) : void {
-		if(!Newspaper::getPlugin()->badPerm($player, "gui.manage.edit", "gui.manage.perm.edit")) {
-			$player->sendForm(new EditForm(Newspaper::getPlugin()->getNewspaperInfo($this->getOption($selectedOption)->getText()), $this->lang));
-		}
+		$player->sendForm(new MyNewspaperInfoForm(Newspaper::getPlugin()->getNewspaperInfo($this->getOption($selectedOption)->getText()), $this->lang));
 	}
 }

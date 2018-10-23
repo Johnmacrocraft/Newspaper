@@ -31,7 +31,13 @@ class MySubscriptionInfoForm extends MenuForm {
 
 	public function __construct(string $player, string $name, BaseLang $lang) {
 		$this->lang = $lang;
-		parent::__construct($this->lang->translateString("gui.subinfo.title"), $this->lang->translateString("gui.subinfo.label", [Newspaper::getPlugin()->getSubscription($player, $name)["subscribeUntil"]]), [new MenuOption($this->lang->translateString("gui.subinfo.button.unsub"))]);
+		parent::__construct($this->lang->translateString("gui.subinfo.title"),
+			$this->lang->translateString("gui.subinfo.label.expiresAt", [Newspaper::getPlugin()->getSubscription($player, $name)["subscribeUntil"]]) . TextFormat::EOL .
+			$this->lang->translateString(Newspaper::getPlugin()->getPlayerData($player)->get("autorenew") ?
+				"gui.subinfo.label.autorenew.enabled" :
+				"gui.subinfo.label.autorenew.disabled"),
+			[new MenuOption($this->lang->translateString("gui.subinfo.button.unsub"))]
+		);
 		$this->name = $name;
 	}
 

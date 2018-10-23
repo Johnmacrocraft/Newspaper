@@ -29,6 +29,6 @@ class CheckSubscriptionsTask extends Task {
 	}
 
 	public function onRun(int $currentTick) {
-		$this->plugin->cleanExpired();
+		$this->plugin->checkSubscriptions();
 	}
 }

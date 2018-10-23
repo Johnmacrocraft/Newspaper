@@ -55,6 +55,9 @@ permissions:
               newspaper.gui.manage.edit:
                 description: Allows editing newspapers
                 default: true
+              newspaper.gui.manage.getProfit:
+                description: Allows getting salary
+                default: true
           newspaper.gui.settings:
             description: Allows managing settings and subscriptions
             default: op

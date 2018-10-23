@@ -81,7 +81,7 @@ class Newspaper extends PluginBase implements Listener {
 	public function onCommand(CommandSender $sender, Command $command, string $label, array $args) : bool {
 		if($command->getName() === "newspaper") {
 			if($sender instanceof Player) {
-				$this->cleanExpired();
+				$this->checkSubscriptions();
 				$sender->sendForm(new MainForm($sender->getName()));
 			} else {
 				$sender->sendMessage(TextFormat::RED . $this->getLanguage($this->getConfig()->get("lang"))->translateString("command.onlyPlayers"));
@@ -96,7 +96,7 @@ class Newspaper extends PluginBase implements Listener {
 	 */
 	public function onJoin(PlayerJoinEvent $event) : void {
 		if(!is_file($playerData = $this->getPlayersFolder() . ($name = strtolower($event->getPlayer()->getName())) . ".yml")) {
-			new Config($playerData, Config::YAML, ["lang" => $this->getConfig()->get("lang"), "subscriptions" => []]);
+			new Config($playerData, Config::YAML, ["lang" => $this->getConfig()->get("lang"), "autorenew" => $this->getConfig()->get("autorenew"), "subscriptions" => []]);
 		}
 
 		$subscriptions = $this->getPlayerData($name);
@@ -128,12 +128,12 @@ class Newspaper extends PluginBase implements Listener {
 	/**
 	 * Returns newspaper information.
 	 *
-	 * @param string $name
+	 * @param string $newspaper
 	 *
 	 * @return Config
 	 */
-	public function getNewspaperInfo(string $name) : Config {
-		return new Config($this->getNewspaperFolder() . strtolower($name) . "/info.yml", Config::YAML);
+	public function getNewspaperInfo(string $newspaper) : Config {
+		return new Config($this->getNewspaperFolder() . strtolower($newspaper) . "/info.yml", Config::YAML);
 	}
 
 	/**
@@ -146,41 +146,41 @@ class Newspaper extends PluginBase implements Listener {
 	}
 
 	/**
-	 * Returns published newspaper of given newspaper.
+	 * Returns published newspaper for the given newspaper.
 	 *
-	 * @param string $newspaperName
-	 * @param string $publishedName
+	 * @param string $newspaper
+	 * @param string $published
 	 *
 	 * @return array
 	*/
-	public function getPublishedNewspaper(string $newspaperName, string $publishedName) : array {
-		return [new Config(($path = $this->getNewspaperFolder() . strtolower($newspaperName) . "/newspaper/" . $publishedName) . ".yml", Config::YAML), new Config($path . ".dat", Config::SERIALIZED)];
+	public function getPublishedNewspaper(string $newspaper, string $published) : array {
+		return [new Config(($path = $this->getNewspaperFolder() . strtolower($newspaper) . "/newspaper/" . $published) . ".yml", Config::YAML), new Config($path . ".dat", Config::SERIALIZED)];
 	}
 
 	/**
 	 * Returns an array of path to all published newspapers.
 	 *
-	 * @param string $name
+	 * @param string $newspaper
 	 *
 	 * @return array
 	 */
-	public function getAllPublishedNewspapers(string $name) : array {
-		return glob($this->getNewspaperFolder() . strtolower($name) . "/newspaper/*.yml");
+	public function getAllPublishedNewspapers(string $newspaper) : array {
+		return glob($this->getNewspaperFolder() . strtolower($newspaper) . "/newspaper/*.yml");
 	}
 
 	/**
 	 * Sets subscription status of specified newspaper for the given player.
 	 *
-	 * @param string $name
+	 * @param string $player
 	 * @param string $newspaper
 	 * @param \DateTime $subscribeUntil
 	 */
-	public function setSubscription(string $name, string $newspaper, ?\DateTime $subscribeUntil = null) : void {
+	public function setSubscription(string $player, string $newspaper, ?\DateTime $subscribeUntil = null) : void {
 		if($subscribeUntil === null) {
 			$subscribeUntil = (new \DateTime())->add(new \DateInterval("P1M"));
 		}
 
-		$playerData = $this->getPlayerData($name);
+		$playerData = $this->getPlayerData($player);
 		$playerData->setNested(($prefix = "subscriptions." . strtolower($newspaper)) . ".subscribeUntil", $subscribeUntil);
 		$playerData->setNested($prefix . ".queue", []);
 		$playerData->save();
@@ -189,45 +189,77 @@ class Newspaper extends PluginBase implements Listener {
 	/**
 	 * Returns subscription status of specified newspaper for the given player.
 	 *
-	 * @param string $name
+	 * @param string $player
 	 * @param string $newspaper
 	 *
 	 * @return array
 	 */
-	public function getSubscription(string $name, string $newspaper) : array {
-		return $this->getPlayerData($name)->getNested("subscriptions." . $newspaper);
+	public function getSubscription(string $player, string $newspaper) : array {
+		return $this->getPlayerData($player)->getNested("subscriptions." . $newspaper);
 	}
 
 	/**
-	 * Removes expired subscriptions from player data.
+	 * Removes subscription of specified newspaper for the given player.
+	 *
+	 * @param string $player
+	 * @param string $newspaper
+	 */
+	public function removeSubscription(string $player, string $newspaper) : void {
+		$playerData = $this->getPlayerData($player);
+		$playerData->removeNested("subscriptions." . $newspaper);
+		$playerData->save();
+	}
+
+	/**
+	 * Renews subscription of specified newspaper for the given player.
+	 *
+	 * @param string $player
+	 * @param string $newspaper
+	 */
+	public function renewSubscription(string $player, string $newspaper) : void {
+		if($this->getPlayerData($player)->get("autorenew")) {
+			if($this->canBuyNewspapers() && ($API = Newspaper::getPlugin()->getEconomyAPI())->reduceMoney($player, $this->getNewspaperInfo($newspaper)->getNested("price.subscriptions"), true, "Newspaper") === $API::RET_INVALID) {
+				$this->removeSubscription($player, $newspaper);
+				return;
+			}
+
+			$this->setSubscription($player, $newspaper);
+			$this->getLogger()->notice("[Newspaper: Debug] Renewed subscription");
+		} else {
+			$this->removeSubscription($player, $newspaper);
+		}
+	}
+
+	/**
+	 * Checks subscriptions and performs actions.
 	 *
 	 * @param array|null $pathArray
 	 */
-	public function cleanExpired(?array $pathArray = null) {
+	public function checkSubscriptions(?array $pathArray = null) {
 		if($pathArray === null) {
 			$pathArray = glob($this->getPlayersFolder() . "*.yml");
 		}
 
 		foreach($pathArray as $dataPath) {
 			$playerData = new Config($dataPath, Config::YAML);
+
 			foreach($this->getSubscriptionsArray($playerData->getAll()) as $subscription) {
-				if(new \DateTime($playerData->getNested(($key = "subscriptions." . $subscription) . ".subscribeUntil")) < new \DateTime()) {
-					$playerData->removeNested($key);
+				if(new \DateTime($playerData->getNested("subscriptions." . $subscription . ".subscribeUntil")) < new \DateTime()) {
+					$this->renewSubscription(pathinfo($dataPath, PATHINFO_FILENAME), $subscription);
 				}
 			}
-			$playerData->save();
 		}
 	}
 
 	/**
 	 * Returns player data for the given player.
 	 *
-	 * @param string $name
+	 * @param string $player
 	 *
 	 * @return Config
 	 */
-	public function getPlayerData(string $name) : Config {
-		return new Config($this->getPlayersFolder() . strtolower($name) . ".yml", Config::YAML);
+	public function getPlayerData(string $player) : Config {
+		return new Config($this->getPlayersFolder() . strtolower($player) . ".yml", Config::YAML);
 	}
 
 	/**
@@ -239,6 +271,7 @@ class Newspaper extends PluginBase implements Listener {
 	public function getSubscriptionsArray(array $array) : array {
 		$result = [];
 		unset($array["lang"]);
+		unset($array["autorenew"]);
 		foreach($array as $sub) {
 			$result = array_merge($result, $sub);
 		}

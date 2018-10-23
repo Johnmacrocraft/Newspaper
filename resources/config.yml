@@ -1,2 +1,4 @@
 #The language to use for Newspaper messages in console, rcon and as default language for players
 lang: eng
+#Whether to automatically renew subscriptions
+autorenew: true
