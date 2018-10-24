@@ -56,9 +56,9 @@ class BuyInfoForm extends MenuForm {
 				return;
 			}
 
-			$name = strtolower($this->info->get("name"));
+			$newspaper = strtolower($this->info->get("name"));
 
-			if(isset(Newspaper::getPlugin()->getPlayerData($player->getName())->getAll()["subscriptions"][$name])) {
+			if(isset(Newspaper::getPlugin()->getPlayerData($player->getName())->getAll()["subscriptions"][$newspaper])) {
 				$player->sendMessage(TextFormat::RED . $this->lang->translateString("gui.buyinfo.error.alreadySubscribe"));
 				return;
 			}
@@ -76,17 +76,17 @@ class BuyInfoForm extends MenuForm {
 
 			$this->info->set("profit", $this->info->get("profit") + $price);
 			$this->info->save();
-			Newspaper::getPlugin()->setSubscription($player->getName(), $name);
+			Newspaper::getPlugin()->setSubscription($player->getName(), $newspaper);
 			$noSpace = false;
 			$queue = [];
 
-			if($player->getInventory()->getSize() - count($player->getInventory()->getContents()) < count($newspapers = Newspaper::getPlugin()->getAllPublishedNewspapers($name))) {
+			if($player->getInventory()->getSize() - count($player->getInventory()->getContents()) < count($publishedPaths = Newspaper::getPlugin()->getAllPublished($newspaper))) {
 				$noSpace = true;
 				$player->sendMessage(TextFormat::GOLD . $this->lang->translateString("gui.buyinfo.info.invNoSpace"));
 			}
 
-			foreach($newspapers as $newspaper) {
-				$newspaperData = Newspaper::getPlugin()->getPublishedNewspaper($name, pathinfo($newspaper, PATHINFO_FILENAME));
+			foreach($publishedPaths as $publishedPath) {
+				$newspaperData = Newspaper::getPlugin()->getPublished($newspaper, pathinfo($publishedPath, PATHINFO_FILENAME));
 
 				if($noSpace) {
 					$queue[] = strtolower($newspaperData[0]->get("name"));
@@ -101,8 +101,6 @@ class BuyInfoForm extends MenuForm {
 				}
 			}
 
-			($subscriptions = Newspaper::getPlugin()->getPlayerData($player->getName()))->setNested("subscriptions." . $name . ".queue", $queue);
-			$subscriptions->save();
 			$player->sendMessage(TextFormat::GREEN . $this->lang->translateString("gui.buyinfo.success.subscribe", [$this->info->get("name")]));
 		}
 	}

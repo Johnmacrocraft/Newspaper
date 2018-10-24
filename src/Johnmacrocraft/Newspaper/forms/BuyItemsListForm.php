@@ -39,7 +39,7 @@ class BuyItemsListForm extends CustomForm {
 	public function __construct(Config $info, BaseLang $lang) {
 		$this->info = $info;
 		$this->lang = $lang;
-		if(empty($newspapers = Newspaper::getPlugin()->getAllPublishedNewspapers($info->get("name")))) {
+		if(empty($newspapers = Newspaper::getPlugin()->getAllPublished($info->get("name")))) {
 			$options[] = new Label("No_Newspapers", $lang->translateString("gui.buyitems.label.noItems"));
 		} else {
 			foreach($newspapers as $newspaper) {
@@ -86,7 +86,7 @@ class BuyItemsListForm extends CustomForm {
 		foreach($selected as $newspaper) {
 			$item = ItemFactory::fromString(ItemIds::WRITTEN_BOOK);
 			$item->setCount(1);
-			$item->setPages(($newspaperData = Newspaper::getPlugin()->getPublishedNewspaper($this->info->get("name"), $newspaper))[1]->getAll());
+			$item->setPages(($newspaperData = Newspaper::getPlugin()->getPublished($this->info->get("name"), $newspaper))[1]->getAll());
 			$item->setTitle($newspaperData[0]->get("name"));
 			$item->setAuthor($newspaperData[0]->get("author"));
 			$item->setGeneration($newspaperData[0]->get("generation"));

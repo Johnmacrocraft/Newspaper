@@ -106,7 +106,7 @@ class Newspaper extends PluginBase implements Listener {
 			foreach($queue = $subscriptions->getNested($key = "subscriptions." . $subscription . ".queue") as $newspaper) {
 				$item = ItemFactory::fromString(ItemIds::WRITTEN_BOOK);
 				$item->setCount(1);
-				$item->setPages(($newspaperData = $this->getPublishedNewspaper($subscription, $newspaper))[1]->getAll());
+				$item->setPages(($newspaperData = $this->getPublished($subscription, $newspaper))[1]->getAll());
 				$item->setTitle($newspaperData[0]->get("name"));
 				$item->setAuthor($newspaperData[0]->get("author"));
 				$item->setGeneration($newspaperData[0]->get("generation"));
@@ -137,7 +137,7 @@ class Newspaper extends PluginBase implements Listener {
 	}
 
 	/**
-	 * Returns an array of path to all newspaper information files.
+	 * Returns an array of path to all the newspaper information files.
 	 *
 	 * @return array
 	 */
@@ -146,30 +146,30 @@ class Newspaper extends PluginBase implements Listener {
 	}
 
 	/**
-	 * Returns published newspaper for the given newspaper.
+	 * Returns the published newspaper for the given newspaper.
 	 *
 	 * @param string $newspaper
 	 * @param string $published
 	 *
 	 * @return array
 	*/
-	public function getPublishedNewspaper(string $newspaper, string $published) : array {
+	public function getPublished(string $newspaper, string $published) : array {
 		return [new Config(($path = $this->getNewspaperFolder() . strtolower($newspaper) . "/newspaper/" . $published) . ".yml", Config::YAML), new Config($path . ".dat", Config::SERIALIZED)];
 	}
 
 	/**
-	 * Returns an array of path to all published newspapers.
+	 * Returns an array of path to all the published newspapers for the given newspaper.
 	 *
 	 * @param string $newspaper
 	 *
 	 * @return array
 	 */
-	public function getAllPublishedNewspapers(string $newspaper) : array {
+	public function getAllPublished(string $newspaper) : array {
 		return glob($this->getNewspaperFolder() . strtolower($newspaper) . "/newspaper/*.yml");
 	}
 
 	/**
-	 * Sets subscription status of specified newspaper for the given player.
+	 * Sets the subscription status of the specified newspaper for the given player.
 	 *
 	 * @param string $player
 	 * @param string $newspaper
@@ -187,7 +187,7 @@ class Newspaper extends PluginBase implements Listener {
 	}
 
 	/**
-	 * Returns subscription status of specified newspaper for the given player.
+	 * Returns the subscription status of the specified newspaper for the given player.
 	 *
 	 * @param string $player
 	 * @param string $newspaper
@@ -199,7 +199,7 @@ class Newspaper extends PluginBase implements Listener {
 	}
 
 	/**
-	 * Removes subscription of specified newspaper for the given player.
+	 * Removes the subscription of the specified newspaper for the given player.
 	 *
 	 * @param string $player
 	 * @param string $newspaper
@@ -211,7 +211,7 @@ class Newspaper extends PluginBase implements Listener {
 	}
 
 	/**
-	 * Renews subscription of specified newspaper for the given player.
+	 * Renews the subscription of the specified newspaper for the given player.
 	 *
 	 * @param string $player
 	 * @param string $newspaper
@@ -224,7 +224,6 @@ class Newspaper extends PluginBase implements Listener {
 			}
 
 			$this->setSubscription($player, $newspaper);
-			$this->getLogger()->notice("[Newspaper: Debug] Renewed subscription");
 		} else {
 			$this->removeSubscription($player, $newspaper);
 		}
@@ -252,7 +251,7 @@ class Newspaper extends PluginBase implements Listener {
 	}
 
 	/**
-	 * Returns player data for the given player.
+	 * Returns the player data for the given player.
 	 *
 	 * @param string $player
 	 *
@@ -279,7 +278,7 @@ class Newspaper extends PluginBase implements Listener {
 	}
 
 	/**
-	 * Returns api of Economy plugin.
+	 * Returns the api of Economy plugin.
 	 *
 	 * @return Plugin|null
 	 */
@@ -297,7 +296,7 @@ class Newspaper extends PluginBase implements Listener {
 	}
 
 	/**
-	 * Returns whether the given player has the permission, and sends message if true.
+	 * Returns whether the given player has the permission, and sends the message if true.
 	 *
 	 * @param Player $player
 	 * @param string $perm
@@ -323,7 +322,7 @@ class Newspaper extends PluginBase implements Listener {
 	}
 
 	/**
-	 * Returns path to newspaper folder.
+	 * Returns the path to the newspaper folder.
 	 *
 	 * @return string
 	 */
@@ -332,7 +331,7 @@ class Newspaper extends PluginBase implements Listener {
 	}
 
 	/**
-	 * Returns path to players folder.
+	 * Returns the path to the players folder.
 	 *
 	 * @return string
 	 */
@@ -341,7 +340,7 @@ class Newspaper extends PluginBase implements Listener {
 	}
 
 	/**
-	 * Returns path to language files folder.
+	 * Returns the path to the language files folder.
 	 *
 	 * @return string
 	 */
@@ -361,7 +360,7 @@ class Newspaper extends PluginBase implements Listener {
 	}
 
 	/**
-	 * Returns an array of path to all language files.
+	 * Returns an array of path to all the language files.
 	 *
 	 * @return array
 	 */

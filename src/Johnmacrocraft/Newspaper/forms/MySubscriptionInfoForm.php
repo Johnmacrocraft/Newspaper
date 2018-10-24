@@ -43,8 +43,7 @@ class MySubscriptionInfoForm extends MenuForm {
 
 	public function onSubmit(Player $player, int $selectedOption) : void {
 		if(!Newspaper::getPlugin()->badPerm($player, "gui.subscriptions.unsubscribe", "gui.subinfo.perm.unsub")) {
-			($subscriptions = Newspaper::getPlugin()->getPlayerData($player->getName()))->removeNested("subscriptions." . $this->name);
-			$subscriptions->save();
+			Newspaper::getPlugin()->removeSubscription($player->getName(), $this->name);
 			$player->sendMessage(TextFormat::GREEN . $this->lang->translateString("gui.subinfo.success.unsub"));
 		}
 	}
