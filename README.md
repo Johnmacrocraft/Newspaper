@@ -15,5 +15,5 @@ Original: An error has occurred<br />
 Bad translation: An error has occurred. Please report this problem to the issue tracker.<br />
 There's no need to translate exceedingly liberally like that; that's not what the translators should do.
 - NEVER translate if you DON'T know how to translate, especially with machine translators.
-- In most cases, translations should be translated literally. Do NOT add words without my consent. If there's something that should be translated liberally, please ask me before doing it.<br />
+- Translate liberally if the translation is better with it, but don't abuse it too much. If there's something that should be translated liberally, please ask me before doing it.<br />
 - Translate with your language's grammar rules followed and consistency.
