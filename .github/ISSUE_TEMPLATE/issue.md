@@ -17,13 +17,14 @@ about: Report a bug
 2. ...
 
 ### OS and versions
-<!--- use the 'version' command in PocketMine-MP
+<!--- use the 'version' and 'plugin' command in PocketMine-MP
 
 NOTE: LATEST is not a valid version. PocketMine-MP version should include Jenkins build number and/or git commit hash.
 
 NO support whatsoever will be provided for third-party modified variants of PocketMine-MP. Issues relating to third-party modifications will be closed as spam.
 -->
 * PocketMine-MP: <!-- LATEST IS NOT A VALID VERSION -->
+* Newspaper:
 * PHP:
 * Server OS:
 * Game version: PE/Win10 (delete as appropriate)
