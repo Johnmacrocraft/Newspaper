@@ -95,15 +95,23 @@ class Newspaper extends PluginBase implements Listener {
 	 * @priority MONITOR
 	 */
 	public function onJoin(PlayerJoinEvent $event) : void {
-		if(!is_file($playerData = $this->getPlayersFolder() . ($name = strtolower($event->getPlayer()->getName())) . ".yml")) {
-			new Config($playerData, Config::YAML, ["lang" => $this->getConfig()->get("lang"), "autorenew" => $this->getConfig()->get("autorenew"), "subscriptions" => []]);
+		$name = strtolower($event->getPlayer()->getName());
+		if(!is_file($playerData = $this->getPlayersFolder() . "$name.yml")) {
+			new Config($playerData,
+				Config::YAML,
+				["lang" => $this->getConfig()->get("lang"),
+					"autorenew" => $this->getConfig()->get("autorenew"),
+					"subscriptions" => []
+				]
+			);
 		}
 
 		$subscriptions = $this->getPlayerData($name);
 
 		foreach($this->getSubscriptionsArray($subscriptions->getAll()) as $subscription) {
 			$player = $event->getPlayer();
-			foreach($queue = $subscriptions->getNested($key = "subscriptions." . $subscription . ".queue") as $newspaper) {
+			$key = "subscriptions.$subscription.queue";
+			foreach($queue = $subscriptions->getNested() as $newspaper) {
 				$item = ItemFactory::fromString(ItemIds::WRITTEN_BOOK);
 				$item->setCount(1);
 				$item->setPages(($newspaperData = $this->getPublished($subscription, $newspaper))[1]->getAll());
@@ -181,8 +189,9 @@ class Newspaper extends PluginBase implements Listener {
 		}
 
 		$playerData = $this->getPlayerData($player);
-		$playerData->setNested(($prefix = "subscriptions." . strtolower($newspaper)) . ".subscribeUntil", $subscribeUntil);
-		$playerData->setNested($prefix . ".queue", []);
+		$prefix = "subscriptions." . strtolower($newspaper);
+		$playerData->setNested("$prefix.subscribeUntil", $subscribeUntil);
+		$playerData->setNested("$prefix.queue", []);
 		$playerData->save();
 	}
 
