@@ -95,7 +95,7 @@ class Newspaper extends PluginBase implements Listener {
 	 * @priority MONITOR
 	 */
 	public function onJoin(PlayerJoinEvent $event) : void {
-		$name = strtolower($event->getPlayer()->getName());
+		$name = $event->getPlayer()->getLowerCaseName();
 		if(!is_file($playerData = $this->getPlayersFolder() . "$name.yml")) {
 			new Config($playerData,
 				Config::YAML,
