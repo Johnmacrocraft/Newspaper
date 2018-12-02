@@ -111,7 +111,7 @@ class Newspaper extends PluginBase implements Listener {
 		foreach($this->getSubscriptionsArray($subscriptions->getAll()) as $subscription) {
 			$player = $event->getPlayer();
 			$key = "subscriptions.$subscription.queue";
-			foreach($queue = $subscriptions->getNested() as $newspaper) {
+			foreach($queue = $subscriptions->getNested($key) as $newspaper) {
 				$item = ItemFactory::fromString(ItemIds::WRITTEN_BOOK);
 				$item->setCount(1);
 				$item->setPages(($newspaperData = $this->getPublished($subscription, $newspaper))[1]->getAll());
@@ -131,6 +131,91 @@ class Newspaper extends PluginBase implements Listener {
 			}
 		}
 		$subscriptions->save();
+	}
+
+	/**
+	 * Creates a new newspaper.
+	 *
+	 * @param string $newspaper
+	 * @param string $description
+	 * @param array $member
+	 * @param string $icon
+	 * @param int $perOneFee
+	 * @param int $subsFee
+	 */
+	public function createNewspaper(string $newspaper, string $description, array $member, string $icon, int $perOneFee, int $subsFee) {
+		$newspaperPath = $this->getNewspaperFolder();
+
+		mkdir($newspaperPath);
+		mkdir($newspaperPath . "/newspaper");
+
+		$info = new Config($newspaperPath . "/info.yml",
+			Config::YAML,
+			["name" => $newspaper,
+				"description" => $description,
+				"member" => $member,
+				"icon" => $icon
+			]
+		);
+
+		$info->setNested("price.perOne", $perOneFee);
+		$info->setNested("price.subscriptions", $subsFee);
+		$info->set("profit", 0);
+		$info->save();
+	}
+
+	/**
+	 * Publishes a newspaper.
+	 *
+	 * @param string $mainNewspaper
+	 * @param string $newspaper
+	 * @param string $description
+	 * @param string $author
+	 * @param int $generation
+	 * @param array $contents
+	 * @param bool|null $checkExpired
+	 */
+	public function publishNewspaper(string $mainNewspaper, string $newspaper, string $description, string $author, int $generation, array $contents, bool $checkExpired = true) {
+		$newspaperInfo = new Config($this->getNewspaperFolder() . $mainNewspaper . "/newspaper/" . strtolower($newspaper) . ".yml",
+			Config::YAML,
+			["name" => $newspaper,
+				"description" => $description,
+				"author" => $author,
+				"generation" => $generation
+			]
+		);
+		$newspaperData = new Config($this->getNewspaperFolder() . $mainNewspaper . "/newspaper/" . strtolower($newspaper) . ".dat", Config::SERIALIZED, $contents);
+
+		if($checkExpired) {
+			$this->checkSubscriptions();
+		}
+		foreach(glob($this->getPlayersFolder() . "*.yml") as $playerDataPath) {
+			$playerData = new Config($playerDataPath, Config::YAML);
+
+			if(isset($playerData->getAll()["subscriptions"][$mainNewspaper])) {
+				if(($subscriber = $this->getServer()->getPlayer($subscriberName = pathinfo($playerDataPath, PATHINFO_FILENAME)))->isOnline()) {
+					$item = ItemFactory::fromString(ItemIds::WRITTEN_BOOK);
+					$item->setCount(1);
+					$item->setPages(($newspaperData->getAll()));
+					$item->setTitle($newspaperInfo->get("name"));
+					$item->setAuthor($newspaperInfo->get("author"));
+					$item->setGeneration($newspaperInfo->get("generation"));
+
+					if($subscriber->getInventory()->canAddItem($item)) {
+						$subscriber->getInventory()->addItem($item);
+						break;
+					} else {
+						$subscriber->sendMessage(TextFormat::GOLD . $this->getLanguage($this->getPlayerData($subscriberName)->get("lang"))->translateString("gui.publish.sub.info"));
+					}
+
+				}
+				$key = "subscriptions.$mainNewspaper.queue";
+				$queue = $playerData->getNested($key);
+				$queue[] = strtolower($newspaper);
+				$playerData->setNested($key, $queue);
+				$playerData->save();
+			}
+		}
 	}
 
 	/**

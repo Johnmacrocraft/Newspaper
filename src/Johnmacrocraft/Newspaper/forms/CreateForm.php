@@ -43,26 +43,17 @@ class CreateForm extends CustomForm {
 	}
 
 	public function onSubmit(Player $player, CustomFormResponse $data) : void {
-		if(is_dir($newspaper = Newspaper::getPlugin()->getNewspaperFolder() . strtolower($name = $data->getString("Name")))) {
+		if(is_dir(Newspaper::getPlugin()->getNewspaperFolder() . strtolower($newspaper = $data->getString("Name")))) {
 			$player->sendMessage(TextFormat::RED . $this->lang->translateString("gui.create.error.alreadyExists"));
 		} else {
-			if(strpbrk($name, "\\/:*?\"<>|") === FALSE && !empty($name)) { //We don't want people trying to use invalid characters on Windows system, or access parent directories
-				mkdir($newspaper);
-				mkdir($newspaper . "/newspaper");
-
-				$info = new Config($newspaper . "/info.yml",
-					Config::YAML,
-					["name" => $name,
-					"description" => $data->getString("Description"),
-					"member" => (empty($member = $data->getString("Member")) ? [$player->getName()] : explode(", ", $member)),
-					"icon" => $data->getString("Icon")
-					]
+			if(strpbrk($newspaper, "\\/:*?\"<>|") === FALSE && !empty($newspaper)) { //We don't want people trying to use invalid characters on Windows system, or access parent directories
+				Newspaper::getPlugin()->createNewspaper($newspaper,
+					$data->getString("Description"),
+					(empty($member = $data->getString("Member")) ? [$player->getName()] : explode(", ", $member)),
+					$data->getString("Icon"),
+					(int) $data->getString("Price_PerOne"),
+					(int) $data->getString("Price_Subscription")
 				);
-
-				$info->setNested("price.perOne", (int) $data->getString("Price_PerOne"));
-				$info->setNested("price.subscriptions", (int) $data->getString("Price_Subscription"));
-				$info->set("profit", 0);
-				$info->save();
 
 				$player->sendMessage(TextFormat::GREEN . $this->lang->translateString("gui.create.success.create"));
 			} else {

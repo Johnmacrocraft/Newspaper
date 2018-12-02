@@ -52,47 +52,17 @@ class PublishForm extends CustomForm {
 		$getItem = $player->getInventory()->getItemInHand();
 
 		if(($getId = $getItem->getId()) === ItemIds::WRITABLE_BOOK || $getId === ItemIds::WRITTEN_BOOK) {
-			if(is_file($newspaper = Newspaper::getPlugin()->getNewspaperFolder() . $this->name . "/newspaper/" . (strtolower($name = empty($data->getString("Name")) ? $getItem->getTitle() : $data->getString("Name"))) . ".yml")) {
+			if(is_file(Newspaper::getPlugin()->getNewspaperFolder() . $this->name . "/newspaper/" . (strtolower($newspaper = empty($data->getString("Name")) ? $getItem->getTitle() : $data->getString("Name"))) . ".yml")) {
 				$player->sendMessage(TextFormat::RED . $this->lang->translateString("gui.create.error.alreadyExists"));
 			} else {
-				if(strpbrk($name, "\\/:*?\"<>|") === FALSE && !empty($name)) { //We don't want people trying to use invalid characters on Windows system, access parent directories, or empty names
-					$newspaperInfo = new Config($newspaper,
-						Config::YAML,
-						["name" => $name,
-						"description" => $data->getString("Description"),
-						"author" => (empty($author = $data->getString("Author")) ? ($getId === ItemIds::WRITTEN_BOOK ? $getItem->getAuthor() : $player->getName()) : $author),
-						"generation" => $getItem === ItemIds::WRITTEN_BOOK ?: WrittenBook::GENERATION_ORIGINAL]
+				if(strpbrk($newspaper, "\\/:*?\"<>|") === FALSE && !empty($newspaper)) { //We don't want people trying to use invalid characters on Windows system, access parent directories, or empty names
+					Newspaper::getPlugin()->publishNewspaper($this->name,
+						$newspaper,
+						$data->getString("Description"),
+						(empty($author = $data->getString("Author")) ? ($getId === ItemIds::WRITTEN_BOOK ? $getItem->getAuthor() : $player->getName()) : $author),
+						$getItem === ItemIds::WRITTEN_BOOK ?: WrittenBook::GENERATION_ORIGINAL,
+						$getItem->getPages()
 					);
-					$newspaperData = new Config(Newspaper::getPlugin()->getNewspaperFolder() . $this->name . "/newspaper/" . strtolower($name) . ".dat", Config::SERIALIZED, $getItem->getPages());
-
-					Newspaper::getPlugin()->cleanExpired();
-					foreach(glob(Newspaper::getPlugin()->getPlayersFolder() . "*.yml") as $playerDataPath) {
-						$playerData = new Config($playerDataPath, Config::YAML);
-
-						if(isset($playerData->getAll()["subscriptions"][$this->name])) {
-							if(($subscriber = Server::getInstance()->getPlayer(pathinfo($playerDataPath, PATHINFO_FILENAME)))->isOnline()) {
-								$item = ItemFactory::fromString(ItemIds::WRITTEN_BOOK);
-								$item->setCount(1);
-								$item->setPages(($newspaperData->getAll()));
-								$item->setTitle($newspaperInfo->get("name"));
-								$item->setAuthor($newspaperInfo->get("author"));
-								$item->setGeneration($newspaperInfo->get("generation"));
-
-								if($subscriber->getInventory()->canAddItem($item)) {
-									$player->getInventory()->addItem($item);
-									break;
-								} else {
-									$player->sendMessage(TextFormat::GOLD . $this->lang->translateString("gui.publish.sub.info"));
-								}
-
-							}
-							$key = "subscriptions." . $this->name . ".queue";
-							$queue = $playerData->getNested($key);
-							$queue[] = strtolower($name);
-							$playerData->setNested($key, $queue);
-							$playerData->save();
-						}
-					}
 
 					$player->sendMessage(TextFormat::GREEN . $this->lang->translateString("gui.publish.success.publish"));
 				} else {
