@@ -144,7 +144,7 @@ class Newspaper extends PluginBase implements Listener {
 	 * @param int $subsFee
 	 */
 	public function createNewspaper(string $newspaper, string $description, array $member, string $icon, int $perOneFee, int $subsFee) {
-		$newspaperPath = $this->getNewspaperFolder();
+		$newspaperPath = $this->getNewspaperFolder() . strtolower($newspaper);
 
 		mkdir($newspaperPath);
 		mkdir($newspaperPath . "/newspaper");
@@ -176,7 +176,7 @@ class Newspaper extends PluginBase implements Listener {
 	 * @param bool|null $checkExpired
 	 */
 	public function publishNewspaper(string $mainNewspaper, string $newspaper, string $description, string $author, int $generation, array $contents, bool $checkExpired = true) {
-		$newspaperInfo = new Config($this->getNewspaperFolder() . $mainNewspaper . "/newspaper/" . strtolower($newspaper) . ".yml",
+		$newspaperInfo = new Config($this->getNewspaperFolder() . "$mainNewspaper/newspaper/" . strtolower($newspaper) . ".yml",
 			Config::YAML,
 			["name" => $newspaper,
 				"description" => $description,
@@ -184,7 +184,7 @@ class Newspaper extends PluginBase implements Listener {
 				"generation" => $generation
 			]
 		);
-		$newspaperData = new Config($this->getNewspaperFolder() . $mainNewspaper . "/newspaper/" . strtolower($newspaper) . ".dat", Config::SERIALIZED, $contents);
+		$newspaperData = new Config($this->getNewspaperFolder() . "$mainNewspaper/newspaper/" . strtolower($newspaper) . ".dat", Config::SERIALIZED, $contents);
 
 		if($checkExpired) {
 			$this->checkSubscriptions();
