@@ -16,8 +16,8 @@
 namespace Johnmacrocraft\Newspaper\forms;
 
 use Johnmacrocraft\Newspaper\Newspaper;
-use pocketmine\form\MenuForm;
-use pocketmine\form\MenuOption;
+use dktapps\pmforms\MenuForm;
+use dktapps\pmforms\MenuOption;
 use pocketmine\lang\BaseLang;
 use pocketmine\Player;
 use pocketmine\utils\Config;
@@ -32,10 +32,11 @@ class ItemListForm extends MenuForm {
 		foreach(Newspaper::getPlugin()->getAllNewspaperInfo() as $info) {
 			$options[] = new MenuOption((new Config($info, Config::YAML))->get("name"));
 		}
-		parent::__construct($lang->translateString("gui.itemlist.title"), $lang->translateString("gui.itemlist.label"), $options);
-	}
-
-	public function onSubmit(Player $player, int $selectedOption) : void {
-		$player->sendForm(new BuyInfoForm(Newspaper::getPlugin()->getNewspaperInfo($this->getOption($selectedOption)->getText()), $this->lang));
+		parent::__construct($lang->translateString("gui.itemlist.title"), $lang->translateString("gui.itemlist.label"), $options,
+			function(Player $player, int $selectedOption) : void {
+				$player->sendForm(new BuyInfoForm(Newspaper::getPlugin()->getNewspaperInfo($this->getOption($selectedOption)->getText()), $this->lang));
+			},
+			function(Player $player) : void {} //TODO: Remove this once a fix for form API is out
+		);
 	}
 }

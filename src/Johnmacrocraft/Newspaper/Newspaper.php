@@ -175,7 +175,7 @@ class Newspaper extends PluginBase implements Listener {
 	 * @param array $contents
 	 * @param bool|null $checkExpired
 	 */
-	public function publishNewspaper(string $mainNewspaper, string $newspaper, string $description, string $author, int $generation, array $contents, bool $checkExpired = true) {
+	public function publishNewspaper(string $mainNewspaper, string $newspaper, string $description, string $author, int $generation, array $contents, ?bool $checkExpired = true) {
 		$newspaperInfo = new Config($this->getNewspaperFolder() . "$mainNewspaper/newspaper/" . strtolower($newspaper) . ".yml",
 			Config::YAML,
 			["name" => $newspaper,

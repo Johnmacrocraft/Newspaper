@@ -16,8 +16,8 @@
 namespace Johnmacrocraft\Newspaper\forms;
 
 use Johnmacrocraft\Newspaper\Newspaper;
-use pocketmine\form\MenuForm;
-use pocketmine\form\MenuOption;
+use dktapps\pmforms\MenuForm;
+use dktapps\pmforms\MenuOption;
 use pocketmine\lang\BaseLang;
 use pocketmine\Player;
 use pocketmine\utils\Config;
@@ -37,26 +37,26 @@ class MyNewspaperInfoForm extends MenuForm {
 			$lang->translateString("gui.newspaperInfo.label", [$info->get("profit")]),
 			[new MenuOption($lang->translateString("gui.newspaperInfo.button.edit")),
 				new MenuOption($lang->translateString("gui.newspaperInfo.button.getProfit"))
-			]
-		);
-	}
-
-	public function onSubmit(Player $player, int $selectedOption) : void {
-		if($selectedOption === 0) {
-			if(!Newspaper::getPlugin()->badPerm($player, "gui.manage.edit", "gui.newspaperinfo.perm.edit")) {
-				$player->sendForm(new EditForm($this->info, $this->lang));
-			}
-		} elseif($selectedOption === 1) {
-			if(!Newspaper::getPlugin()->badPerm($player, "gui.manage.getProfit", "gui.newspaperinfo.perm.getProfit")) {
-				if(Newspaper::getPlugin()->canBuyNewspapers()) {
-					Newspaper::getPlugin()->getEconomyAPI()->addMoney($player, $this->info->get("profit"));
-					$this->info->set("profit", 0);
-					$this->info->save();
-					$player->sendMessage(TextFormat::GREEN . $this->lang->translateString("gui.newspaperInfo.success.getProfit"));
-				} else {
-					$player->sendMessage(TextFormat::GOLD . $this->lang->translateString("gui.buy.info.noFee"));
+			],
+			function(Player $player, int $selectedOption) : void {
+				if($selectedOption === 0) {
+					if(!Newspaper::getPlugin()->badPerm($player, "gui.manage.edit", "gui.newspaperinfo.perm.edit")) {
+						$player->sendForm(new EditForm($this->info, $this->lang));
+					}
+				} elseif($selectedOption === 1) {
+					if(!Newspaper::getPlugin()->badPerm($player, "gui.manage.getProfit", "gui.newspaperinfo.perm.getProfit")) {
+						if(Newspaper::getPlugin()->canBuyNewspapers()) {
+							Newspaper::getPlugin()->getEconomyAPI()->addMoney($player, $this->info->get("profit"));
+							$this->info->set("profit", 0);
+							$this->info->save();
+							$player->sendMessage(TextFormat::GREEN . $this->lang->translateString("gui.newspaperInfo.success.getProfit"));
+						} else {
+							$player->sendMessage(TextFormat::GOLD . $this->lang->translateString("gui.buy.info.noFee"));
+						}
+					}
 				}
-			}
-		}
+			},
+			function(Player $player) : void {} //TODO: Remove this once a fix for form API is out
+		);
 	}
 }

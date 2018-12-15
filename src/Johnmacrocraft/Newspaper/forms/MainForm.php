@@ -16,8 +16,9 @@
 namespace Johnmacrocraft\Newspaper\forms;
 
 use Johnmacrocraft\Newspaper\Newspaper;
-use pocketmine\form\MenuForm;
-use pocketmine\form\MenuOption;
+use dktapps\pmforms\MenuForm;
+use dktapps\pmforms\MenuOption;
+use pocketmine\lang\BaseLang;
 use pocketmine\Player;
 
 class MainForm extends MenuForm {
@@ -33,27 +34,27 @@ class MainForm extends MenuForm {
 				new MenuOption($this->lang->translateString("gui.main.button.buy")),
 				new MenuOption($this->lang->translateString("gui.main.button.manage")),
 				new MenuOption($this->lang->translateString("gui.main.button.settings"))
-			]
+			],
+			function(Player $player, int $selectedOption) : void {
+				if($selectedOption === 0) {
+					if(!Newspaper::getPlugin()->badPerm($player, "gui.create", "gui.main.perm.create")) {
+						$player->sendForm(new CreateTypeForm($this->lang));
+					}
+				} elseif($selectedOption === 1) {
+					if(!Newspaper::getPlugin()->badPerm($player, "gui.buy", "gui.main.perm.buy")) {
+						$player->sendForm(new ItemListForm($this->lang));
+					}
+				} elseif($selectedOption === 2) {
+					if(!Newspaper::getPlugin()->badPerm($player, "gui.manage", "gui.main.perm.manage")) {
+						$player->sendForm(new ManageForm($player->getName(), $this->lang));
+					}
+				} elseif($selectedOption === 3) {
+					if(!Newspaper::getPlugin()->badPerm($player, "gui.settings", "gui.main.perm.settings")) {
+						$player->sendForm(new SettingsForm($this->lang));
+					}
+				}
+			},
+			function(Player $player) : void {} //TODO: Remove this once a fix for form API is out
 		);
-	}
-
-	public function onSubmit(Player $player, int $selectedOption) : void {
-		if($selectedOption === 0) {
-			if(!Newspaper::getPlugin()->badPerm($player, "gui.create", "gui.main.perm.create")) {
-				$player->sendForm(new CreateTypeForm($this->lang));
-			}
-		} elseif($selectedOption === 1) {
-			if(!Newspaper::getPlugin()->badPerm($player, "gui.buy", "gui.main.perm.buy")) {
-				$player->sendForm(new ItemListForm($this->lang));
-			}
-		} elseif($selectedOption === 2) {
-			if(!Newspaper::getPlugin()->badPerm($player, "gui.manage", "gui.main.perm.manage")) {
-				$player->sendForm(new ManageForm($player->getName(), $this->lang));
-			}
-		} elseif($selectedOption === 3) {
-			if(!Newspaper::getPlugin()->badPerm($player, "gui.settings", "gui.main.perm.settings")) {
-				$player->sendForm(new SettingsForm($this->lang));
-			}
-		}
 	}
 }

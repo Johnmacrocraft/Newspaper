@@ -15,11 +15,10 @@
 
 namespace Johnmacrocraft\Newspaper\forms;
 
-use Johnmacrocraft\Newspaper\Newspaper;
-use pocketmine\form\CustomForm;
-use pocketmine\form\CustomFormResponse;
-use pocketmine\form\element\Input;
-use pocketmine\form\element\Label;
+use dktapps\pmforms\CustomForm;
+use dktapps\pmforms\CustomFormResponse;
+use dktapps\pmforms\element\Input;
+use dktapps\pmforms\element\Label;
 use pocketmine\lang\BaseLang;
 use pocketmine\Player;
 use pocketmine\utils\Config;
@@ -42,23 +41,23 @@ class EditForm extends CustomForm {
 				new Input("Icon", $lang->translateString("gui.create.input.iconURL.name"), "https://en.touhouwiki.net/images/b/b4/Th16Aya.png", $info->get("icon")),
 				new Input("Price_PerOne", $lang->translateString("gui.create.input.priceOne.name"), "0", $info->get("price")["perOne"]),
 				new Input("Price_Subscription", $lang->translateString("gui.create.input.priceSub.name"), "0", $info->get("price")["subscriptions"])
-			]
+			],
+			function(Player $player, CustomFormResponse $data) : void {
+				$profit = $this->info->get("profit"); //Copy profit value before setting data so that we don't lose it
+				$this->info->setAll(
+					["name" => $this->info->get("name"),
+						"description" => $data->getString("Description"),
+						"member" => (empty($member = $data->getString("Member")) ? [$player->getName()] : explode(", ", $member)),
+						"icon" => $data->getString("Icon")
+					]
+				);
+				$this->info->setNested("price.perOne", (int) $data->getString("Price_PerOne"));
+				$this->info->setNested("price.subscriptions", (int) $data->getString("Price_Subscription"));
+				$this->info->set("profit", $profit);
+				$this->info->save();
+				$player->sendMessage(TextFormat::GREEN . $this->lang->translateString("gui.edit.success.edit"));
+			},
+			function(Player $player) : void {} //TODO: Remove this once a fix for form API is out
 		);
-	}
-
-	public function onSubmit(Player $player, CustomFormResponse $data) : void {
-		$profit = $this->info->get("profit"); //Copy profit value before setting data so that we don't lose it
-		$this->info->setAll(
-			["name" => $this->info->get("name"),
-				"description" => $data->getString("Description"),
-				"member" => (empty($member = $data->getString("Member")) ? [$player->getName()] : explode(", ", $member)),
-				"icon" => $data->getString("Icon")
-			]
-		);
-		$this->info->setNested("price.perOne", (int) $data->getString("Price_PerOne"));
-		$this->info->setNested("price.subscriptions", (int) $data->getString("Price_Subscription"));
-		$this->info->set("profit", $profit);
-		$this->info->save();
-		$player->sendMessage(TextFormat::GREEN . $this->lang->translateString("gui.edit.success.edit"));
 	}
 }

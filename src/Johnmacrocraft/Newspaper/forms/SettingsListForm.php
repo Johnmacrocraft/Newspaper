@@ -16,12 +16,13 @@
 namespace Johnmacrocraft\Newspaper\forms;
 
 use Johnmacrocraft\Newspaper\Newspaper;
-use pocketmine\form\CustomForm;
-use pocketmine\form\CustomFormResponse;
-use pocketmine\form\element\Dropdown;
-use pocketmine\form\element\Toggle;
+use dktapps\pmforms\CustomForm;
+use dktapps\pmforms\CustomFormResponse;
+use dktapps\pmforms\element\Dropdown;
+use dktapps\pmforms\element\Toggle;
 use pocketmine\lang\BaseLang;
 use pocketmine\Player;
+use pocketmine\utils\Config;
 use pocketmine\utils\TextFormat;
 
 class SettingsListForm extends CustomForm {
@@ -42,14 +43,14 @@ class SettingsListForm extends CustomForm {
 		parent::__construct($lang->translateString("gui.settings.title"),
 			[new Dropdown("Language", $lang->translateString("gui.settingslist.dropdown.lang.name"), $this->langList, array_search($this->playerData->get("lang"), $this->langList)),
 				new Toggle("Auto_Renew", $lang->translateString("gui.settingslist.toggle.autorenew.name"), $this->playerData->get("autorenew"))
-			]
+			],
+			function(Player $player, CustomFormResponse $data) : void {
+				$this->playerData->set("lang", $this->langList[$data->getInt("Language")]);
+				$this->playerData->set("autorenew", $data->getBool("Auto_Renew"));
+				$this->playerData->save();
+				$player->sendMessage(TextFormat::GREEN . $this->lang->translateString("gui.settingslist.success.set"));
+			},
+			function(Player $player) : void {} //TODO: Remove this once a fix for form API is out
 		);
-	}
-
-	public function onSubmit(Player $player, CustomFormResponse $data) : void {
-		$this->playerData->set("lang", $this->langList[$data->getInt("Language")]);
-		$this->playerData->set("autorenew", $data->getBool("Auto_Renew"));
-		$this->playerData->save();
-		$player->sendMessage(TextFormat::GREEN . $this->lang->translateString("gui.settingslist.success.set"));
 	}
 }

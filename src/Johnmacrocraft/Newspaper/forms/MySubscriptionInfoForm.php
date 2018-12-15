@@ -16,8 +16,8 @@
 namespace Johnmacrocraft\Newspaper\forms;
 
 use Johnmacrocraft\Newspaper\Newspaper;
-use pocketmine\form\MenuForm;
-use pocketmine\form\MenuOption;
+use dktapps\pmforms\MenuForm;
+use dktapps\pmforms\MenuOption;
 use pocketmine\lang\BaseLang;
 use pocketmine\Player;
 use pocketmine\utils\TextFormat;
@@ -36,15 +36,15 @@ class MySubscriptionInfoForm extends MenuForm {
 			$this->lang->translateString(Newspaper::getPlugin()->getPlayerData($player)->get("autorenew") ?
 				"gui.subinfo.label.autorenew.enabled" :
 				"gui.subinfo.label.autorenew.disabled"),
-			[new MenuOption($this->lang->translateString("gui.subinfo.button.unsub"))]
+			[new MenuOption($this->lang->translateString("gui.subinfo.button.unsub"))],
+			function(Player $player) : void {
+				if(!Newspaper::getPlugin()->badPerm($player, "gui.subscriptions.unsubscribe", "gui.subinfo.perm.unsub")) {
+					Newspaper::getPlugin()->removeSubscription($player->getName(), $this->name);
+					$player->sendMessage(TextFormat::GREEN . $this->lang->translateString("gui.subinfo.success.unsub"));
+				}
+			},
+			function(Player $player) : void {} //TODO: Remove this once a fix for form API is out
 		);
 		$this->name = $name;
-	}
-
-	public function onSubmit(Player $player, int $selectedOption) : void {
-		if(!Newspaper::getPlugin()->badPerm($player, "gui.subscriptions.unsubscribe", "gui.subinfo.perm.unsub")) {
-			Newspaper::getPlugin()->removeSubscription($player->getName(), $this->name);
-			$player->sendMessage(TextFormat::GREEN . $this->lang->translateString("gui.subinfo.success.unsub"));
-		}
 	}
 }

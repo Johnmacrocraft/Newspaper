@@ -16,8 +16,8 @@
 namespace Johnmacrocraft\Newspaper\forms;
 
 use Johnmacrocraft\Newspaper\Newspaper;
-use pocketmine\form\MenuForm;
-use pocketmine\form\MenuOption;
+use dktapps\pmforms\MenuForm;
+use dktapps\pmforms\MenuOption;
 use pocketmine\lang\BaseLang;
 use pocketmine\Player;
 
@@ -28,18 +28,21 @@ class CreateTypeForm extends MenuForm {
 
 	public function __construct(BaseLang $lang) {
 		$this->lang = $lang;
-		parent::__construct($lang->translateString("gui.create.title"), $lang->translateString("gui.createtype.label"), [new MenuOption($lang->translateString("gui.createtype.button.new")), new MenuOption($lang->translateString("gui.createtype.button.publish"))]);
-	}
-
-	public function onSubmit(Player $player, int $selectedOption) : void {
-		if($selectedOption === 0) {
-			if(!Newspaper::getPlugin()->badPerm($player, "gui.create.new", "gui.createtype.perm.new")) {
-				$player->sendForm(new CreateForm($this->lang));
-			}
-		} elseif($selectedOption === 1) {
-			if(!Newspaper::getPlugin()->badPerm($player, "gui.create.publish", "gui.createtype.perm.publish")) {
-				$player->sendForm(new PublishItemForm($player->getName(), $this->lang));
-			}
-		}
+		parent::__construct($lang->translateString("gui.create.title"),
+			$lang->translateString("gui.createtype.label"),
+			[new MenuOption($lang->translateString("gui.createtype.button.new")), new MenuOption($lang->translateString("gui.createtype.button.publish"))],
+			function(Player $player, int $selectedOption) : void {
+				if($selectedOption === 0) {
+					if(!Newspaper::getPlugin()->badPerm($player, "gui.create.new", "gui.createtype.perm.new")) {
+						$player->sendForm(new CreateForm($this->lang));
+					}
+				} elseif($selectedOption === 1) {
+					if(!Newspaper::getPlugin()->badPerm($player, "gui.create.publish", "gui.createtype.perm.publish")) {
+						$player->sendForm(new PublishItemForm($player->getName(), $this->lang));
+					}
+				}
+			},
+			function(Player $player) : void {} //TODO: Remove this once a fix for form API is out
+		);
 	}
 }

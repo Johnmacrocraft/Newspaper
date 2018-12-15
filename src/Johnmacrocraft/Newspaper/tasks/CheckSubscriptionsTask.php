@@ -17,7 +17,6 @@ namespace Johnmacrocraft\Newspaper\tasks;
 
 use Johnmacrocraft\Newspaper\Newspaper;
 use pocketmine\scheduler\Task;
-use pocketmine\utils\Config;
 
 class CheckSubscriptionsTask extends Task {
 

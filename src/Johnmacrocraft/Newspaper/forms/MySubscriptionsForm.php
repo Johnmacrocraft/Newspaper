@@ -16,8 +16,8 @@
 namespace Johnmacrocraft\Newspaper\forms;
 
 use Johnmacrocraft\Newspaper\Newspaper;
-use pocketmine\form\MenuForm;
-use pocketmine\form\MenuOption;
+use dktapps\pmforms\MenuForm;
+use dktapps\pmforms\MenuOption;
 use pocketmine\lang\BaseLang;
 use pocketmine\Player;
 
@@ -35,10 +35,11 @@ class MySubscriptionsForm extends MenuForm {
 				$options[] = new MenuOption($subscribedItem);
 			}
 		}
-		parent::__construct($lang->translateString("gui.sub.title"), $this->lang->translateString("gui.sub.label"), $options);
-	}
-
-	public function onSubmit(Player $player, int $selectedOption) : void {
-	    $player->sendForm(new MySubscriptionInfoForm($player->getName(), strtolower($this->getOption($selectedOption)->getText()), $this->lang));
+		parent::__construct($lang->translateString("gui.sub.title"), $this->lang->translateString("gui.sub.label"), $options,
+			function(Player $player, int $selectedOption) : void {
+				$player->sendForm(new MySubscriptionInfoForm($player->getName(), strtolower($this->getOption($selectedOption)->getText()), $this->lang));
+			},
+			function(Player $player) : void {} //TODO: Remove this once a fix for form API is out
+		);
 	}
 }
