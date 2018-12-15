@@ -49,8 +49,7 @@ class SettingsListForm extends CustomForm {
 				$this->playerData->set("autorenew", $data->getBool("Auto_Renew"));
 				$this->playerData->save();
 				$player->sendMessage(TextFormat::GREEN . $this->lang->translateString("gui.settingslist.success.set"));
-			},
-			function(Player $player) : void {} //TODO: Remove this once a fix for form API is out
+			}
 		);
 	}
 }

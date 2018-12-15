@@ -41,8 +41,7 @@ class CreateTypeForm extends MenuForm {
 						$player->sendForm(new PublishItemForm($player->getName(), $this->lang));
 					}
 				}
-			},
-			function(Player $player) : void {} //TODO: Remove this once a fix for form API is out
+			}
 		);
 	}
 }

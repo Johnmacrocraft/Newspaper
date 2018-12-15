@@ -35,8 +35,7 @@ class ItemListForm extends MenuForm {
 		parent::__construct($lang->translateString("gui.itemlist.title"), $lang->translateString("gui.itemlist.label"), $options,
 			function(Player $player, int $selectedOption) : void {
 				$player->sendForm(new BuyInfoForm(Newspaper::getPlugin()->getNewspaperInfo($this->getOption($selectedOption)->getText()), $this->lang));
-			},
-			function(Player $player) : void {} //TODO: Remove this once a fix for form API is out
+			}
 		);
 	}
 }

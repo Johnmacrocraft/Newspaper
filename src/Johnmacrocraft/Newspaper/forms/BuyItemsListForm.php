@@ -92,8 +92,7 @@ class BuyItemsListForm extends CustomForm {
 				}
 
 				$player->sendMessage(TextFormat::GREEN . $this->lang->translateString("gui.buyitems.success.buy", [$this->info->get("name"), Newspaper::getPlugin()->getEconomyAPI()->getMonetaryUnit() . $price]));
-			},
-			function(Player $player) : void {} //TODO: Remove this once a fix for form API is out
+			}
 		);
 	}
 }

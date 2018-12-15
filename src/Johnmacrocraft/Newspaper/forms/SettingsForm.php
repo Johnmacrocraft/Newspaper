@@ -41,8 +41,7 @@ class SettingsForm extends MenuForm {
 						$player->sendForm(new MySubscriptionsForm($player->getName(), $this->lang));
 					}
 				}
-			},
-			function(Player $player) : void {} //TODO: Remove this once a fix for form API is out
+			}
 		);
 	}
 }

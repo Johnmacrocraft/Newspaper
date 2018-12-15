@@ -42,8 +42,7 @@ class MySubscriptionInfoForm extends MenuForm {
 					Newspaper::getPlugin()->removeSubscription($player->getName(), $this->name);
 					$player->sendMessage(TextFormat::GREEN . $this->lang->translateString("gui.subinfo.success.unsub"));
 				}
-			},
-			function(Player $player) : void {} //TODO: Remove this once a fix for form API is out
+			}
 		);
 		$this->name = $name;
 	}

@@ -37,8 +37,7 @@ class PublishItemForm extends MenuForm {
 		parent::__construct($lang->translateString("gui.publish.title"), $lang->translateString("gui.publishitem.label"), $options,
 			function(Player $player, int $selectedOption) : void {
 				$player->sendForm(new PublishForm(strtolower($this->getOption($selectedOption)->getText()), $this->lang));
-			},
-			function(Player $player) : void {} //TODO: Remove this once a fix for form API is out
+			}
 		);
 	}
 }

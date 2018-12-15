@@ -65,8 +65,7 @@ class PublishForm extends CustomForm {
 				} else {
 					$player->sendMessage(TextFormat::RED . $this->lang->translateString("gui.publish.error.notBook"));
 				}
-			},
-			function(Player $player) : void {} //TODO: Remove this once a fix for form API is out
+			}
 		);
 		$this->name = $name;
 	}

@@ -56,8 +56,7 @@ class CreateForm extends CustomForm {
 						$player->sendMessage(TextFormat::RED . $this->lang->translateString("gui.create.error.invalidName"));
 					}
 				}
-			},
-			function(Player $player) : void {} //TODO: Remove this once a fix for form API is out
+			}
 		);
 	}
 }

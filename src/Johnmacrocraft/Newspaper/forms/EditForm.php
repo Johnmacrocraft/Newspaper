@@ -56,8 +56,7 @@ class EditForm extends CustomForm {
 				$this->info->set("profit", $profit);
 				$this->info->save();
 				$player->sendMessage(TextFormat::GREEN . $this->lang->translateString("gui.edit.success.edit"));
-			},
-			function(Player $player) : void {} //TODO: Remove this once a fix for form API is out
+			}
 		);
 	}
 }
