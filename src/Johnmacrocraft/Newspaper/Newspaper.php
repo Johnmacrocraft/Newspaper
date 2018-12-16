@@ -258,7 +258,11 @@ class Newspaper extends PluginBase implements Listener {
 	 * @return array
 	 */
 	public function getAllPublished(string $newspaper) : array {
-		return glob($this->getNewspaperFolder() . strtolower($newspaper) . "/newspaper/*.yml");
+		$escapedPath = str_replace("[", "\[", $newspaper); //First checks for brackets
+		$escapedPath = str_replace("]", "\]", $escapedPath);
+		$escapedPath = str_replace("\[", "[[]", $escapedPath); //Second checks for brackets
+		$escapedPath = str_replace("\]", "[]]", $escapedPath);
+		return glob($this->getNewspaperFolder() . strtolower($escapedPath) . "/newspaper/*.yml");
 	}
 
 	/**
