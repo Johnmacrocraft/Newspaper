@@ -45,7 +45,7 @@ class CreateForm extends CustomForm {
 					if(strpbrk($newspaper, "\\/:*?\"<>|") === FALSE && !empty($newspaper)) { //We don't want people trying to use invalid characters on Windows system, or access parent directories
 						Newspaper::getPlugin()->createNewspaper($newspaper,
 							$data->getString("Description"),
-							(empty($member = $data->getString("Member")) ? [$player->getName()] : explode(", ", $member)),
+							(empty($member = $data->getString("Member")) || !in_array($name = strtolower($player->getName()), $memberArray = explode(", ", $member)) ? [$name] : $memberArray),
 							$data->getString("Icon"),
 							(int) $data->getString("Price_PerOne"),
 							(int) $data->getString("Price_Subscription")

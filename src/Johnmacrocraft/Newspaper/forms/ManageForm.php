@@ -30,7 +30,7 @@ class ManageForm extends MenuForm {
 	public function __construct(string $name, BaseLang $lang) {
 		$this->lang = $lang;
 		foreach(Newspaper::getPlugin()->getAllNewspaperInfo() as $info) {
-			if(in_array($name, ($config = new Config($info, Config::YAML))->get("member"))) {
+			if(in_array(strtolower($name), ($config = new Config($info, Config::YAML))->get("member"))) {
 				$options[] = new MenuOption($config->get("name"));
 			}
 		}

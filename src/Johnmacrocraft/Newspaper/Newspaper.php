@@ -67,7 +67,7 @@ class Newspaper extends PluginBase implements Listener {
 		}
 
 		$this->getServer()->getPluginManager()->registerEvents($this, $this);
-		$this->getScheduler()->scheduleRepeatingTask(new CheckSubscriptionsTask($this), 12000);
+		$this->getScheduler()->scheduleRepeatingTask(new CheckSubscriptionsTask($this), 12000); //10 minutes
 	}
 
 	/**
@@ -153,7 +153,7 @@ class Newspaper extends PluginBase implements Listener {
 			Config::YAML,
 			["name" => $newspaper,
 				"description" => $description,
-				"member" => $member,
+				"member" => array_map("strtolower", $member),
 				"icon" => $icon
 			]
 		);
