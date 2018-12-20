@@ -21,6 +21,7 @@ use dktapps\pmforms\MenuOption;
 use pocketmine\lang\BaseLang;
 use pocketmine\Player;
 use pocketmine\utils\Config;
+use pocketmine\utils\TextFormat;
 
 class ItemListForm extends MenuForm {
 
@@ -32,7 +33,10 @@ class ItemListForm extends MenuForm {
 		foreach(Newspaper::getPlugin()->getAllNewspaperInfo() as $info) {
 			$options[] = new MenuOption((new Config($info, Config::YAML))->get("name"));
 		}
-		parent::__construct($lang->translateString("gui.itemlist.title"), $lang->translateString("gui.itemlist.label"), $options,
+		parent::__construct($lang->translateString("gui.itemlist.title"),
+			$lang->translateString("gui.itemlist.label") .
+			(isset($options) ? "" : str_repeat(TextFormat::EOL, 2) . $lang->translateString("gui.itemlist.label.noItems")),
+			($options ?? []),
 			function(Player $player, int $selectedOption) : void {
 				$player->sendForm(new BuyInfoForm(Newspaper::getPlugin()->getNewspaperInfo($this->getOption($selectedOption)->getText()), $this->lang));
 			}

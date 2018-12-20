@@ -176,7 +176,9 @@ class Newspaper extends PluginBase implements Listener {
 	 * @param bool|null $checkExpired
 	 */
 	public function publishNewspaper(string $mainNewspaper, string $newspaper, string $description, string $author, int $generation, array $contents, ?bool $checkExpired = true) {
-		$newspaperInfo = new Config($this->getNewspaperFolder() . "$mainNewspaper/newspaper/" . strtolower($newspaper) . ".yml",
+		$basePath = $this->getNewspaperFolder() . "$mainNewspaper/newspaper/" . strtolower($newspaper);
+
+		$newspaperInfo = new Config("$basePath.yml",
 			Config::YAML,
 			["name" => $newspaper,
 				"description" => $description,
@@ -184,7 +186,7 @@ class Newspaper extends PluginBase implements Listener {
 				"generation" => $generation
 			]
 		);
-		$newspaperData = new Config($this->getNewspaperFolder() . "$mainNewspaper/newspaper/" . strtolower($newspaper) . ".dat", Config::SERIALIZED, $contents);
+		$newspaperData = new Config("$basePath.dat", Config::SERIALIZED, $contents);
 
 		if($checkExpired) {
 			$this->checkSubscriptions();
@@ -226,7 +228,10 @@ class Newspaper extends PluginBase implements Listener {
 	 * @return Config
 	 */
 	public function getNewspaperInfo(string $newspaper) : Config {
-		return new Config($this->getNewspaperFolder() . strtolower($newspaper) . "/info.yml", Config::YAML);
+		if(!file_exists($path = $this->getNewspaperFolder() . strtolower($newspaper) . "/info.yml")) {
+			throw new \RuntimeException("Newspaper not found");
+		}
+		return new Config($path, Config::YAML);
 	}
 
 	/**
@@ -247,7 +252,13 @@ class Newspaper extends PluginBase implements Listener {
 	 * @return array
 	*/
 	public function getPublished(string $newspaper, string $published) : array {
-		return [new Config(($path = $this->getNewspaperFolder() . strtolower($newspaper) . "/newspaper/" . $published) . ".yml", Config::YAML), new Config($path . ".dat", Config::SERIALIZED)];
+		if(!file_exists($path = ($this->getNewspaperFolder() . strtolower($newspaper) . "/newspaper/" . $published) . ".yml")) {
+			throw new \RuntimeException("Published newspaper info not found");
+		}
+		if(!file_exists("$path.dat")) {
+			throw new \RuntimeException("Published newspaper data not found");
+		}
+		return [new Config("$path.yml", Config::YAML), new Config("$path.dat", Config::SERIALIZED)];
 	}
 
 	/**
@@ -258,11 +269,14 @@ class Newspaper extends PluginBase implements Listener {
 	 * @return array
 	 */
 	public function getAllPublished(string $newspaper) : array {
-		$escapedPath = str_replace("[", "\[", $newspaper); //First checks for brackets
-		$escapedPath = str_replace("]", "\]", $escapedPath);
-		$escapedPath = str_replace("\[", "[[]", $escapedPath); //Second checks for brackets
-		$escapedPath = str_replace("\]", "[]]", $escapedPath);
-		return glob($this->getNewspaperFolder() . strtolower($escapedPath) . "/newspaper/*.yml");
+		if(!file_exists($this->getNewspaperFolder() . strtolower($newspaper) . "/newspaper/*.yml")) {
+			throw new \RuntimeException("Newspaper not found");
+		}
+		$escapedName = str_replace("[", "\[", $newspaper); //First checks for brackets
+		$escapedName = str_replace("]", "\]", $escapedName);
+		$escapedName = str_replace("\[", "[[]", $escapedName); //Second checks for brackets
+		$escapedName = str_replace("\]", "[]]", $escapedName);
+		return glob($this->getNewspaperFolder() . strtolower($escapedName) . "/newspaper/*.yml");
 	}
 
 	/**
@@ -356,7 +370,10 @@ class Newspaper extends PluginBase implements Listener {
 	 * @return Config
 	 */
 	public function getPlayerData(string $player) : Config {
-		return new Config($this->getPlayersFolder() . strtolower($player) . ".yml", Config::YAML);
+		if(!file_exists($path = $this->getPlayersFolder() . strtolower($player) . ".yml")) {
+			throw new \RuntimeException("Player data not found");
+		}
+		return new Config($path, Config::YAML);
 	}
 
 	/**
@@ -380,7 +397,7 @@ class Newspaper extends PluginBase implements Listener {
 	 *
 	 * @return Plugin|null
 	 */
-	public function getEconomyAPI() : Plugin {
+	public function getEconomyAPI() : ?Plugin {
 		return Server::getInstance()->getPluginManager()->getPlugin("EconomyAPI");
 	}
 
