@@ -1,4 +1,4 @@
-# Newspaper [![Poggit-CI](https://poggit.pmmp.io/ci.badge/Johnmacrocraft/Newspaper/~)](https://poggit.pmmp.io/ci/Johnmacrocraft/Newspaper)
+# Newspaper [![Poggit-CI](https://poggit.pmmp.io/ci.badge/Johnmacrocraft/Newspaper/~)](https://poggit.pmmp.io/ci/Johnmacrocraft/Newspaper) [![Poggit](https://poggit.pmmp.io/shield.state/Newspaper)](https://poggit.pmmp.io/p/Newspaper)
 Add newspapers to your server. Powered by Bunbunmaru Newspaper (文々。新聞).
 
 ## Translations
