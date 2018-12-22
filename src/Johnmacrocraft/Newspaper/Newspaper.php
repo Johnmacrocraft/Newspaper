@@ -95,8 +95,8 @@ class Newspaper extends PluginBase implements Listener {
 	 * @priority MONITOR
 	 */
 	public function onPlayerJoin(PlayerJoinEvent $event) : void {
-		$name = $event->getPlayer()->getLowerCaseName();
-		if(!is_file($playerData = $this->getPlayersFolder() . "$name.yml")) {
+		$playerName = $event->getPlayer()->getLowerCaseName();
+		if(!is_file($playerData = $this->getPlayersFolder() . "$playerName.yml")) {
 			new Config($playerData,
 				Config::YAML,
 				["lang" => $this->getConfig()->get("lang"),
@@ -106,7 +106,7 @@ class Newspaper extends PluginBase implements Listener {
 			);
 		}
 
-		$subscriptions = $this->getPlayerData($name);
+		$subscriptions = $this->getPlayerData($playerName);
 
 		foreach($this->getSubscriptionsArray($subscriptions->getAll()) as $subscription) {
 			$player = $event->getPlayer();
@@ -120,7 +120,7 @@ class Newspaper extends PluginBase implements Listener {
 				$item->setGeneration($newspaperData[0]->get("generation"));
 
 				if(!$player->getInventory()->canAddItem($item)) {
-					$player->sendMessage(TextFormat::RED . $this->getLanguage(Newspaper::getPlayerData($name)->get("lang"))->translateString("main.error.sub.invNoSpace", [$subscription]));
+					$player->sendMessage(TextFormat::RED . $this->getLanguage(Newspaper::getPlayerData($playerName)->get("lang"))->translateString("main.error.sub.invNoSpace", [$subscription]));
 					break 2;
 				}
 
@@ -252,7 +252,7 @@ class Newspaper extends PluginBase implements Listener {
 	 * @return array
 	*/
 	public function getPublished(string $newspaper, string $published) : array {
-		if(!file_exists($path = ($this->getNewspaperFolder() . strtolower($newspaper) . "/newspaper/" . $published) . ".yml")) {
+		if(!file_exists(($path = $this->getNewspaperFolder() . strtolower($newspaper) . "/newspaper/" . $published) . ".yml")) {
 			throw new \RuntimeException("Published newspaper info not found");
 		}
 		if(!file_exists("$path.dat")) {
@@ -269,7 +269,7 @@ class Newspaper extends PluginBase implements Listener {
 	 * @return array
 	 */
 	public function getAllPublished(string $newspaper) : array {
-		if(!file_exists($this->getNewspaperFolder() . strtolower($newspaper) . "/newspaper/*.yml")) {
+		if(!file_exists($this->getNewspaperFolder() . strtolower($newspaper))) {
 			throw new \RuntimeException("Newspaper not found");
 		}
 		$escapedName = str_replace("[", "\[", $newspaper); //First checks for brackets

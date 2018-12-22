@@ -47,7 +47,7 @@ class EditForm extends CustomForm {
 				$this->info->setAll(
 					["name" => $this->info->get("name"),
 						"description" => $data->getString("Description"),
-						"member" => (empty($member = $data->getString("Member")) ? [strtolower($player->getName())] : array_map("strtolower", explode(", ", $member))), //Players can retire from newspapers, so we don't check if their name is in the list
+						"member" => (empty($member = $data->getString("Member")) ? [$player->getLowerCaseName()] : array_map("strtolower", explode(", ", $member))), //Players can retire from newspapers, so we don't check if their name is in the list
 						"icon" => $data->getString("Icon")
 					]
 				);

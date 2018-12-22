@@ -27,10 +27,10 @@ class ManageForm extends MenuForm {
 	/** @var BaseLang */
 	private $lang;
 
-	public function __construct(string $name, BaseLang $lang) {
+	public function __construct(string $playerName, BaseLang $lang) {
 		$this->lang = $lang;
 		foreach(Newspaper::getPlugin()->getAllNewspaperInfo() as $info) {
-			if(in_array(strtolower($name), ($config = new Config($info, Config::YAML))->get("member"))) {
+			if(in_array($playerName, ($config = new Config($info, Config::YAML))->get("member"))) {
 				$options[] = new MenuOption($config->get("name"));
 			}
 		}

@@ -26,8 +26,8 @@ class MainForm extends MenuForm {
 	/** @var BaseLang */
 	private $lang;
 
-	public function __construct(string $name) {
-		$this->lang = Newspaper::getPlugin()->getLanguage(Newspaper::getPlugin()->getPlayerData($name)->get("lang"));
+	public function __construct(string $playerName) {
+		$this->lang = Newspaper::getPlugin()->getLanguage(Newspaper::getPlugin()->getPlayerData($playerName)->get("lang"));
 		parent::__construct("Newspaper",
 			$this->lang->translateString("gui.main.label"),
 			[new MenuOption($this->lang->translateString("gui.main.button.create")),
@@ -46,7 +46,7 @@ class MainForm extends MenuForm {
 					}
 				} elseif($selectedOption === 2) {
 					if(!Newspaper::getPlugin()->badPerm($player, "gui.manage", "gui.main.perm.manage")) {
-						$player->sendForm(new ManageForm($player->getName(), $this->lang));
+						$player->sendForm(new ManageForm($player->getLowerCaseName(), $this->lang));
 					}
 				} elseif($selectedOption === 3) {
 					if(!Newspaper::getPlugin()->badPerm($player, "gui.settings", "gui.main.perm.settings")) {

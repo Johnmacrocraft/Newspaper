@@ -38,7 +38,7 @@ class CreateTypeForm extends MenuForm {
 					}
 				} elseif($selectedOption === 1) {
 					if(!Newspaper::getPlugin()->badPerm($player, "gui.create.publish", "gui.createtype.perm.publish")) {
-						$player->sendForm(new PublishItemForm($player->getName(), $this->lang));
+						$player->sendForm(new PublishItemForm($player->getLowerCaseName(), $this->lang));
 					}
 				}
 			}

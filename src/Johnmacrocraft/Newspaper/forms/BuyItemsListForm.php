@@ -43,8 +43,8 @@ class BuyItemsListForm extends CustomForm {
 			$options[] = new Label("No_Newspapers", $lang->translateString("gui.buyitems.label.noItems"));
 		} else {
 			foreach($newspapers as $newspaper) {
-				$options[] = new Toggle($name = (new Config($newspaper, Config::YAML))->get("name"), $name);
-				$this->newspapers[] = $name;
+				$options[] = new Toggle($newspaperName = (new Config($newspaper, Config::YAML))->get("name"), $newspaperName);
+				$this->newspapers[] = $newspaperName;
 			}
 		}
 		parent::__construct($lang->translateString("gui.buyitems.title"), $options,

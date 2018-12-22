@@ -25,25 +25,25 @@ use pocketmine\utils\TextFormat;
 class MySubscriptionInfoForm extends MenuForm {
 
 	/** @var string */
-	private $name;
+	private $newspaper;
 	/** @var BaseLang */
 	private $lang;
 
-	public function __construct(string $player, string $name, BaseLang $lang) {
+	public function __construct(string $player, string $newspaper, BaseLang $lang) {
 		$this->lang = $lang;
 		parent::__construct($this->lang->translateString("gui.subinfo.title"),
-			$this->lang->translateString("gui.subinfo.label.expiresAt", [Newspaper::getPlugin()->getSubscription($player, $name)["subscribeUntil"]]) . TextFormat::EOL .
+			$this->lang->translateString("gui.subinfo.label.expiresAt", [Newspaper::getPlugin()->getSubscription($player, $newspaper)["subscribeUntil"]]) . TextFormat::EOL .
 			$this->lang->translateString(Newspaper::getPlugin()->getPlayerData($player)->get("autorenew") ?
 				"gui.subinfo.label.autorenew.enabled" :
 				"gui.subinfo.label.autorenew.disabled"),
 			[new MenuOption($this->lang->translateString("gui.subinfo.button.unsub"))],
 			function(Player $player) : void {
 				if(!Newspaper::getPlugin()->badPerm($player, "gui.subscriptions.unsubscribe", "gui.subinfo.perm.unsub")) {
-					Newspaper::getPlugin()->removeSubscription($player->getName(), $this->name);
+					Newspaper::getPlugin()->removeSubscription($player->getName(), $this->newspaper);
 					$player->sendMessage(TextFormat::GREEN . $this->lang->translateString("gui.subinfo.success.unsub"));
 				}
 			}
 		);
-		$this->name = $name;
+		$this->newspaper = $newspaper;
 	}
 }

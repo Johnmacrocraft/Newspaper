@@ -29,11 +29,11 @@ use pocketmine\utils\TextFormat;
 class PublishForm extends CustomForm {
 
 	/** @var string */
-	public $name;
+	public $mainNewspaper;
 	/** @var BaseLang */
 	private $lang;
 
-	public function __construct(string $name, BaseLang $lang) {
+	public function __construct(string $mainNewspaper, BaseLang $lang) {
 		$this->lang = $lang;
 		parent::__construct($lang->translateString("gui.publish.title"),
 			[new Label("Notice", TextFormat::GOLD . $lang->translateString("gui.publish.label")),
@@ -45,14 +45,14 @@ class PublishForm extends CustomForm {
 				$getItem = $player->getInventory()->getItemInHand();
 
 				if(($getId = $getItem->getId()) === ItemIds::WRITABLE_BOOK || $getId === ItemIds::WRITTEN_BOOK) {
-					if(is_file(Newspaper::getPlugin()->getNewspaperFolder() . $this->name . "/newspaper/" . (strtolower($newspaper = empty($data->getString("Name")) ? $getItem->getTitle() : $data->getString("Name"))) . ".yml")) {
+					if(is_file(Newspaper::getPlugin()->getNewspaperFolder() . $this->mainNewspaper . "/newspaper/" . (strtolower($newspaper = empty($data->getString("Name")) ? $getItem->getTitle() : $data->getString("Name"))) . ".yml")) {
 						$player->sendMessage(TextFormat::RED . $this->lang->translateString("gui.create.error.alreadyExists"));
 					} else {
 						if(strpbrk($newspaper, "\\/:*?\"<>|") === FALSE && !empty($newspaper)) { //We don't want people trying to use invalid characters on Windows system, access parent directories, or empty names
-							Newspaper::getPlugin()->publishNewspaper($this->name,
+							Newspaper::getPlugin()->publishNewspaper($this->mainNewspaper,
 								$newspaper,
 								$data->getString("Description"),
-								(empty($author = $data->getString("Author")) ? ($getId === ItemIds::WRITTEN_BOOK ? $getItem->getAuthor() : $player->getName()) : $author),
+								(empty($author = $data->getString("Author")) ? ($getId === ItemIds::WRITTEN_BOOK ? $getItem->getAuthor() : $player->getName()) : $author), //No need to use a lowercased name on here
 								$getItem === ItemIds::WRITTEN_BOOK ?: WrittenBook::GENERATION_ORIGINAL,
 								$getItem->getPages()
 							);
@@ -67,6 +67,6 @@ class PublishForm extends CustomForm {
 				}
 			}
 		);
-		$this->name = $name;
+		$this->mainNewspaper = $mainNewspaper;
 	}
 }

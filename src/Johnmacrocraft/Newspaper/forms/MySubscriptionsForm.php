@@ -26,14 +26,11 @@ class MySubscriptionsForm extends MenuForm {
 	/** @var BaseLang */
 	private $lang;
 
-	public function __construct(string $name, BaseLang $lang) {
+	public function __construct(string $playerName, BaseLang $lang) {
 		$this->lang = $lang;
-		if(empty($subscriptions = Newspaper::getPlugin()->getPlayerData($name)->get("subscriptions"))) {
-			$options = [];
-		} else {
-			foreach (array_keys($subscriptions) as $subscribedItem) {
+		$options = [];
+		foreach(array_keys(Newspaper::getPlugin()->getPlayerData($playerName)->get("subscriptions")) as $subscribedItem) {
 				$options[] = new MenuOption($subscribedItem);
-			}
 		}
 		parent::__construct($lang->translateString("gui.sub.title"), $this->lang->translateString("gui.sub.label"), $options,
 			function(Player $player, int $selectedOption) : void {
