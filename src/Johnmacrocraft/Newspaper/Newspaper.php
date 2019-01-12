@@ -246,8 +246,8 @@ class Newspaper extends PluginBase implements Listener {
 	/**
 	 * Returns the published newspaper for the given newspaper.
 	 *
-	 * @param string $newspaper
-	 * @param string $published
+	 * @param string $newspaper Info (yml)
+	 * @param string $published Contents (dat)
 	 *
 	 * @return array
 	*/
@@ -384,7 +384,7 @@ class Newspaper extends PluginBase implements Listener {
 	 */
 	public function getSubscriptionsArray(array $array) : array {
 		$result = [];
-		unset($array["lang"]);
+		unset($array["lang"]); //Remove other values that have nothing to do with subscriptions first
 		unset($array["autorenew"]);
 		foreach($array as $sub) {
 			$result = array_merge($result, $sub);
@@ -482,9 +482,9 @@ class Newspaper extends PluginBase implements Listener {
 	public function getLanguageList() : array {
 		$langList = []; //From PocketMine
 		if(is_dir($this->getLanguageFolder())) {
-			foreach(new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($this->getFile() . "resources/lang/")) as $langPath) {
+			foreach(new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($this->getLanguageFolder())) as $langPath) {
 				if($langPath->isFile()) {
-					$path = str_replace(DIRECTORY_SEPARATOR, "/", substr((string) $langPath, strlen($this->getFile() . "resources/lang/")));
+					$path = str_replace(DIRECTORY_SEPARATOR, "/", substr((string) $langPath, strlen($this->getLanguageFolder())));
 					$langList[$path] = $langPath;
 				}
 			}
