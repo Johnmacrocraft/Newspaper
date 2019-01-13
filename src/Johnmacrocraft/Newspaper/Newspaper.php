@@ -143,7 +143,7 @@ class Newspaper extends PluginBase implements Listener {
 	 * @param int $perOneFee
 	 * @param int $subsFee
 	 */
-	public function createNewspaper(string $newspaper, string $description, array $member, string $icon, int $perOneFee, int $subsFee) {
+	public function createNewspaper(string $newspaper, string $description, array $member, string $icon, int $perOneFee, int $subsFee) : void {
 		$newspaperPath = $this->getNewspaperFolder() . strtolower($newspaper);
 
 		mkdir($newspaperPath);
@@ -175,7 +175,7 @@ class Newspaper extends PluginBase implements Listener {
 	 * @param array $contents
 	 * @param bool|null $checkExpired
 	 */
-	public function publishNewspaper(string $mainNewspaper, string $newspaper, string $description, string $author, int $generation, array $contents, ?bool $checkExpired = true) {
+	public function publishNewspaper(string $mainNewspaper, string $newspaper, string $description, string $author, int $generation, array $contents, ?bool $checkExpired = true) : void {
 		$basePath = $this->getNewspaperFolder() . "$mainNewspaper/newspaper/" . strtolower($newspaper);
 
 		$newspaperInfo = new Config("$basePath.yml",
@@ -346,7 +346,7 @@ class Newspaper extends PluginBase implements Listener {
 	 *
 	 * @param array|null $pathArray
 	 */
-	public function checkSubscriptions(?array $pathArray = null) {
+	public function checkSubscriptions(?array $pathArray = null) : void {
 		if($pathArray === null) {
 			$pathArray = glob($this->getPlayersFolder() . "*.yml");
 		}
@@ -398,7 +398,7 @@ class Newspaper extends PluginBase implements Listener {
 	 * @return Plugin|null
 	 */
 	public function getEconomyAPI() : ?Plugin {
-		return Server::getInstance()->getPluginManager()->getPlugin("EconomyAPI");
+		return $this->getServer()->getPluginManager()->getPlugin("EconomyAPI");
 	}
 
 	/**
