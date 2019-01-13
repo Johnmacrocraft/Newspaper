@@ -330,7 +330,7 @@ class Newspaper extends PluginBase implements Listener {
 	 */
 	public function renewSubscription(string $player, string $newspaper) : void {
 		if($this->getPlayerData($player)->get("autorenew")) {
-			if($this->canBuyNewspapers() && ($API = Newspaper::getPlugin()->getEconomyAPI())->reduceMoney($player, $this->getNewspaperInfo($newspaper)->getNested("price.subscriptions"), true, "Newspaper") === $API::RET_INVALID) {
+			if($this->canBuyNewspapers() && ($API = $this->getEconomyAPI())->reduceMoney($player, $this->getNewspaperInfo($newspaper)->getNested("price.subscriptions"), true, "Newspaper") === $API::RET_INVALID) {
 				$this->removeSubscription($player, $newspaper);
 				return;
 			}
