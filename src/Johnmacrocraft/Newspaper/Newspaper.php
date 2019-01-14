@@ -432,7 +432,7 @@ class Newspaper extends PluginBase implements Listener {
 	 * @return bool
 	 */
 	public function badPerm(Player $player, string $perm, string $action = "main.perm.generic") : bool {
-		if(!$player->hasPermission("newspaper." . $perm)) {
+		if(!$player->hasPermission("newspaper.$perm")) {
 			$player->sendMessage(TextFormat::RED . $this->getLanguage($this->getPlayerData($player->getName())->get("lang"))->translateString("main.perm.base", ["%$action"]));
 			return true;
 		}
