@@ -405,7 +405,7 @@ class Newspaper extends PluginBase implements Listener {
 	}
 
 	/**
-	 * Returns the api of Economy plugin.
+	 * Returns the API of Economy plugin.
 	 *
 	 * @return Plugin|null
 	 */
