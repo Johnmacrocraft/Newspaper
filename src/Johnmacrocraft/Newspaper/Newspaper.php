@@ -244,21 +244,33 @@ class Newspaper extends PluginBase implements Listener {
 	}
 
 	/**
-	 * Returns the published newspaper for the given newspaper.
+	 * Returns the published newspaper info for the given newspaper.
 	 *
-	 * @param string $newspaper Info (yml)
-	 * @param string $published Contents (dat)
+	 * @param string $newspaper
+	 * @param string $published
 	 *
-	 * @return array
+	 * @return Config
 	*/
-	public function getPublished(string $newspaper, string $published) : array {
+	public function getPublishedInfo(string $newspaper, string $published) : Config {
 		if(!file_exists(($path = $this->getNewspaperFolder() . strtolower($newspaper) . "/newspaper/" . $published) . ".yml")) {
 			throw new \RuntimeException("Published newspaper info not found");
 		}
-		if(!file_exists("$path.dat")) {
-			throw new \RuntimeException("Published newspaper data not found");
+		return new Config("$path.yml", Config::YAML);
+	}
+
+	/**
+	 * Returns the published newspaper pages for the given newspaper.
+	 *
+	 * @param string $newspaper
+	 * @param string $published
+	 *
+	 * @return Config
+	 */
+	public function getPublishedPages(string $newspaper, string $published) : Config {
+		if(!file_exists(($path = $this->getNewspaperFolder() . strtolower($newspaper) . "/newspaper/" . $published) . ".dat")) {
+			throw new \RuntimeException("Published newspaper pages not found");
 		}
-		return [new Config("$path.yml", Config::YAML), new Config("$path.dat", Config::SERIALIZED)];
+		return new Config("$path.dat", Config::SERIALIZED);
 	}
 
 	/**

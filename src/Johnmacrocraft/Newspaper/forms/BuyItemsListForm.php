@@ -84,10 +84,12 @@ class BuyItemsListForm extends CustomForm {
 				foreach($selected as $newspaper) {
 					$item = ItemFactory::fromString(ItemIds::WRITTEN_BOOK);
 					$item->setCount(1);
-					$item->setPages(($newspaperData = Newspaper::getPlugin()->getPublished($this->info->get("name"), $newspaper))[1]->getAll());
-					$item->setTitle($newspaperData[0]->get("name"));
-					$item->setAuthor($newspaperData[0]->get("author"));
-					$item->setGeneration($newspaperData[0]->get("generation"));
+					$newspaperInfo = Newspaper::getPlugin()->getPublishedInfo($this->info->get("name"), $newspaper);
+					$newspaperPages = Newspaper::getPlugin()->getPublishedPages($this->info->get("name"), $newspaper);
+					$item->setPages($newspaperPages->getAll());
+					$item->setTitle($newspaperInfo->get("name"));
+					$item->setAuthor($newspaperInfo->get("author"));
+					$item->setGeneration($newspaperInfo->get("generation"));
 					$player->getInventory()->addItem($item);
 				}
 

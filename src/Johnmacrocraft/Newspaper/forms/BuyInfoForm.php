@@ -83,17 +83,18 @@ class BuyInfoForm extends MenuForm {
 					}
 
 					foreach($publishedPaths as $publishedPath) {
-						$newspaperData = Newspaper::getPlugin()->getPublished($newspaper, pathinfo($publishedPath, PATHINFO_FILENAME));
+						$newspaperInfo = Newspaper::getPlugin()->getPublishedInfo($newspaper, pathinfo($publishedPath, PATHINFO_FILENAME));
+						$newspaperPages = Newspaper::getPlugin()->getPublishedPages($newspaper, pathinfo($publishedPath, PATHINFO_FILENAME));
 
 						if($noSpace) {
-							$queue[] = strtolower($newspaperData[0]->get("name"));
+							$queue[] = strtolower($newspaperInfo->get("name"));
 						} else {
 							$item = ItemFactory::fromString(ItemIds::WRITTEN_BOOK);
 							$item->setCount(1);
-							$item->setPages($newspaperData[1]->getAll());
-							$item->setTitle($newspaperData[0]->get("name"));
-							$item->setAuthor($newspaperData[0]->get("author"));
-							$item->setGeneration($newspaperData[0]->get("generation"));
+							$item->setPages($newspaperPages->getAll());
+							$item->setTitle($newspaperInfo->get("name"));
+							$item->setAuthor($newspaperPages->get("author"));
+							$item->setGeneration($newspaperInfo->get("generation"));
 							$player->getInventory()->addItem($item);
 						}
 					}
