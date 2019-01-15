@@ -21,8 +21,7 @@ use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
 use pocketmine\event\Listener;
 use pocketmine\event\player\PlayerJoinEvent;
-use pocketmine\item\ItemFactory;
-use pocketmine\item\ItemIds;
+use pocketmine\item\WrittenBook;
 use pocketmine\lang\BaseLang;
 use pocketmine\Player;
 use pocketmine\plugin\Plugin;
@@ -112,12 +111,14 @@ class Newspaper extends PluginBase implements Listener {
 			$player = $event->getPlayer();
 			$key = "subscriptions.$subscription.queue";
 			foreach($queue = $subscriptions->getNested($key) as $newspaper) {
-				$item = ItemFactory::fromString(ItemIds::WRITTEN_BOOK);
+				$newspaperInfo = $this->getPublishedInfo($subscription, $newspaper);
+				$newspaperPages = $this->getPublishedPages($subscription, $newspaper);
+				$item = new WrittenBook;
 				$item->setCount(1);
-				$item->setPages(($newspaperData = $this->getPublished($subscription, $newspaper))[1]->getAll());
-				$item->setTitle($newspaperData[0]->get("name"));
-				$item->setAuthor($newspaperData[0]->get("author"));
-				$item->setGeneration($newspaperData[0]->get("generation"));
+				$item->setPages($newspaperInfo->getAll());
+				$item->setTitle($newspaperPages->get("name"));
+				$item->setAuthor($newspaperInfo->get("author"));
+				$item->setGeneration($newspaperPages->get("generation"));
 
 				if(!$player->getInventory()->canAddItem($item)) {
 					$player->sendMessage(TextFormat::RED . $this->getLanguage(Newspaper::getPlayerData($playerName)->get("lang"))->translateString("main.error.sub.invNoSpace", [$subscription]));
@@ -196,7 +197,7 @@ class Newspaper extends PluginBase implements Listener {
 
 			if(isset($playerData->getAll()["subscriptions"][$mainNewspaper])) {
 				if(($subscriber = $this->getServer()->getPlayer($subscriberName = pathinfo($playerDataPath, PATHINFO_FILENAME)))->isOnline()) {
-					$item = ItemFactory::fromString(ItemIds::WRITTEN_BOOK);
+					$item = new WrittenBook;
 					$item->setCount(1);
 					$item->setPages(($newspaperData->getAll()));
 					$item->setTitle($newspaperInfo->get("name"));
@@ -442,9 +443,9 @@ class Newspaper extends PluginBase implements Listener {
 	/**
 	 * Returns this class.
 	 *
-	 * @return Newspaper
+	 * @return Plugin
 	 */
-	public static function getPlugin() : Newspaper {
+	public static function getPlugin() : Plugin {
 		return Server::getInstance()->getPluginManager()->getPlugin("Newspaper");
 	}
 
