@@ -30,16 +30,14 @@ class CreateForm extends CustomForm {
 
 	public function __construct(BaseLang $lang) {
 		$this->lang = $lang;
-		parent::__construct(
-			$lang->translateString("gui.create.title"),
-			[
-				new Input("Name", $lang->translateString("gui.create.input.name.name"), $lang->translateString("gui.create.input.name.hint")),
-				new Input("Description", $lang->translateString("gui.create.input.desc.name"), $lang->translateString("gui.create.input.desc.hint")),
-				new Input("Member", $lang->translateString("gui.create.input.member.name"), $lang->translateString("gui.create.input.member.hint")),
-				new Input("Icon", $lang->translateString("gui.create.input.iconURL.name"), "https://en.touhouwiki.net/images/b/b4/Th16Aya.png"),
-				new Input("Price_PerOne", $lang->translateString("gui.create.input.priceOne.name"), "0"),
-				new Input("Price_Subscription", $lang->translateString("gui.create.input.priceSub.name"), "0")
-			],
+		parent::__construct($lang->translateString("gui.create.title"), [
+			new Input("Name", $lang->translateString("gui.create.input.name.name"), $lang->translateString("gui.create.input.name.hint")),
+			new Input("Description", $lang->translateString("gui.create.input.desc.name"), $lang->translateString("gui.create.input.desc.hint")),
+			new Input("Member", $lang->translateString("gui.create.input.member.name"), $lang->translateString("gui.create.input.member.hint")),
+			new Input("Icon", $lang->translateString("gui.create.input.iconURL.name"), "https://en.touhouwiki.net/images/b/b4/Th16Aya.png"),
+			new Input("Price_PerOne", $lang->translateString("gui.create.input.priceOne.name"), "0"),
+			new Input("Price_Subscription", $lang->translateString("gui.create.input.priceSub.name"), "0")
+		],
 			function(Player $player, CustomFormResponse $data) : void {
 				if(is_dir(Newspaper::getPlugin()->getNewspaperFolder() . strtolower($newspaper = $data->getString("Name")))) {
 					$player->sendMessage(TextFormat::RED . $this->lang->translateString("gui.create.error.alreadyExists"));

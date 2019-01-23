@@ -33,8 +33,7 @@ class ItemListForm extends MenuForm {
 		foreach(Newspaper::getPlugin()->getAllNewspaperInfo() as $info) {
 			$options[] = new MenuOption((new Config($info, Config::YAML))->get("name"));
 		}
-		parent::__construct(
-			$lang->translateString("gui.itemlist.title"),
+		parent::__construct($lang->translateString("gui.itemlist.title"),
 			$lang->translateString("gui.itemlist.label") .
 			(isset($options) ? "" : str_repeat(TextFormat::EOL, 2) . $lang->translateString("gui.itemlist.label.noItems")),
 			($options ?? []),

@@ -101,14 +101,11 @@ class Newspaper extends PluginBase implements Listener {
 	public function onPlayerJoin(PlayerJoinEvent $event) : void {
 		$playerName = $event->getPlayer()->getLowerCaseName();
 		if(!is_file($playerData = $this->getPlayersFolder() . "$playerName.yml")) {
-			new Config($playerData,
-				Config::YAML,
-				[
+			new Config($playerData, Config::YAML, [
 					"lang" => $this->getConfig()->get("lang"),
 					"autorenew" => $this->getConfig()->get("autorenew"),
 					"subscriptions" => []
-				]
-			);
+			]);
 		}
 
 		$subscriptions = $this->getPlayerData($playerName);
@@ -156,15 +153,12 @@ class Newspaper extends PluginBase implements Listener {
 		mkdir($newspaperPath);
 		mkdir($newspaperPath . "/newspaper");
 
-		$info = new Config($newspaperPath . "/info.yml",
-			Config::YAML,
-			[
+		$info = new Config($newspaperPath . "/info.yml", Config::YAML, [
 				"name" => $newspaper,
 				"description" => $description,
 				"member" => array_map("strtolower", $member),
 				"icon" => $icon
-			]
-		);
+		]);
 
 		$info->setNested("price.perOne", $perOneFee);
 		$info->setNested("price.subscriptions", $subsFee);
@@ -186,15 +180,12 @@ class Newspaper extends PluginBase implements Listener {
 	public function publishNewspaper(string $mainNewspaper, string $newspaper, string $description, string $author, int $generation, array $contents, ?bool $checkExpired = true) : void {
 		$basePath = $this->getNewspaperFolder() . "$mainNewspaper/newspaper/" . strtolower($newspaper);
 
-		$newspaperInfo = new Config("$basePath.yml",
-			Config::YAML,
-			[
+		$newspaperInfo = new Config("$basePath.yml", Config::YAML, [
 				"name" => $newspaper,
 				"description" => $description,
 				"author" => $author,
 				"generation" => $generation
-			]
-		);
+		]);
 		$newspaperData = new Config("$basePath.dat", Config::SERIALIZED, $contents);
 
 		if($checkExpired) {

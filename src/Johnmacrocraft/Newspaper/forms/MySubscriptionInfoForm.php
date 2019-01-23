@@ -31,8 +31,7 @@ class MySubscriptionInfoForm extends MenuForm {
 
 	public function __construct(string $player, string $newspaper, BaseLang $lang) {
 		$this->lang = $lang;
-		parent::__construct(
-			$this->lang->translateString("gui.subinfo.title"),
+		parent::__construct($this->lang->translateString("gui.subinfo.title"),
 			$this->lang->translateString("gui.subinfo.label.expiresAt", [Newspaper::getPlugin()->getSubscription($player, $newspaper)["subscribeUntil"]]) . TextFormat::EOL .
 			$this->lang->translateString(Newspaper::getPlugin()->getPlayerData($player)->get("autorenew") ?
 				"gui.subinfo.label.autorenew.enabled" :

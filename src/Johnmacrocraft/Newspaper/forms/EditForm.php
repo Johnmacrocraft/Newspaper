@@ -34,26 +34,22 @@ class EditForm extends CustomForm {
 	public function __construct(Config $info, BaseLang $lang) {
 		$this->info = $info;
 		$this->lang = $lang;
-		parent::__construct(
-			$lang->translateString("gui.edit.title"),
-			[
-				new Label("Name", $info->get("name")),
-				new Input("Description", $lang->translateString("gui.create.input.desc.name"), $lang->translateString("gui.create.input.desc.hint"), $info->get("description")),
-				new Input("Member", $lang->translateString("gui.create.input.member.name"), $lang->translateString("gui.create.input.member.hint"), implode(", ", $info->get("member"))),
-				new Input("Icon", $lang->translateString("gui.create.input.iconURL.name"), "https://en.touhouwiki.net/images/b/b4/Th16Aya.png", $info->get("icon")),
-				new Input("Price_PerOne", $lang->translateString("gui.create.input.priceOne.name"), "0", $info->get("price")["perOne"]),
-				new Input("Price_Subscription", $lang->translateString("gui.create.input.priceSub.name"), "0", $info->get("price")["subscriptions"])
-			],
+		parent::__construct($lang->translateString("gui.edit.title"), [
+			new Label("Name", $info->get("name")),
+			new Input("Description", $lang->translateString("gui.create.input.desc.name"), $lang->translateString("gui.create.input.desc.hint"), $info->get("description")),
+			new Input("Member", $lang->translateString("gui.create.input.member.name"), $lang->translateString("gui.create.input.member.hint"), implode(", ", $info->get("member"))),
+			new Input("Icon", $lang->translateString("gui.create.input.iconURL.name"), "https://en.touhouwiki.net/images/b/b4/Th16Aya.png", $info->get("icon")),
+			new Input("Price_PerOne", $lang->translateString("gui.create.input.priceOne.name"), "0", $info->get("price")["perOne"]),
+			new Input("Price_Subscription", $lang->translateString("gui.create.input.priceSub.name"), "0", $info->get("price")["subscriptions"])
+		],
 			function(Player $player, CustomFormResponse $data) : void {
 				$profit = $this->info->get("profit"); //Copy profit value before setting data so that we don't lose it
-				$this->info->setAll(
-					[
-						"name" => $this->info->get("name"),
-						"description" => $data->getString("Description"),
-						"member" => (empty($member = $data->getString("Member")) ? [$player->getLowerCaseName()] : array_map("strtolower", explode(", ", $member))), //Players can retire from newspapers, so we don't check if their name is in the list
-						"icon" => $data->getString("Icon")
-					]
-				);
+				$this->info->setAll([
+					"name" => $this->info->get("name"),
+					"description" => $data->getString("Description"),
+					"member" => (empty($member = $data->getString("Member")) ? [$player->getLowerCaseName()] : array_map("strtolower", explode(", ", $member))), //Players can retire from newspapers, so we don't check if their name is in the list
+					"icon" => $data->getString("Icon")
+				]);
 				$this->info->setNested("price.perOne", (int) $data->getString("Price_PerOne"));
 				$this->info->setNested("price.subscriptions", (int) $data->getString("Price_Subscription"));
 				$this->info->set("profit", $profit);

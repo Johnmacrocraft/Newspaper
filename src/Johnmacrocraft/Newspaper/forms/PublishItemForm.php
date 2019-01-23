@@ -35,10 +35,7 @@ class PublishItemForm extends MenuForm {
 				$options[] = new MenuOption($config->get("name"));
 			}
 		}
-		parent::__construct(
-			$lang->translateString("gui.publish.title"),
-			$lang->translateString("gui.publishitem.label"),
-			$options,
+		parent::__construct($lang->translateString("gui.publish.title"), $lang->translateString("gui.publishitem.label"), $options,
 			function(Player $player, int $selectedOption) : void {
 				$player->sendForm(new PublishForm(strtolower($this->getOption($selectedOption)->getText()), $this->lang));
 			}

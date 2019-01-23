@@ -28,10 +28,8 @@ class MainForm extends MenuForm {
 
 	public function __construct(string $playerName) {
 		$this->lang = Newspaper::getPlugin()->getLanguage(Newspaper::getPlugin()->getPlayerData($playerName)->get("lang"));
-		parent::__construct(
-			"Newspaper",
-			$this->lang->translateString("gui.main.label"),
-			[
+		parent::__construct("Newspaper",
+			$this->lang->translateString("gui.main.label"), [
 				new MenuOption($this->lang->translateString("gui.main.button.create")),
 				new MenuOption($this->lang->translateString("gui.main.button.buy")),
 				new MenuOption($this->lang->translateString("gui.main.button.manage")),

@@ -28,8 +28,7 @@ class CreateTypeForm extends MenuForm {
 
 	public function __construct(BaseLang $lang) {
 		$this->lang = $lang;
-		parent::__construct(
-			$lang->translateString("gui.create.title"),
+		parent::__construct($lang->translateString("gui.create.title"),
 			$lang->translateString("gui.createtype.label"),
 			[new MenuOption($lang->translateString("gui.createtype.button.new")), new MenuOption($lang->translateString("gui.createtype.button.publish"))],
 			function(Player $player, int $selectedOption) : void {

@@ -28,9 +28,7 @@ class SettingsForm extends MenuForm {
 
 	public function __construct(BaseLang $lang) {
 		$this->lang = $lang;
-		parent::__construct(
-			$lang->translateString("gui.settings.title"),
-			$lang->translateString("gui.settings.label"),
+		parent::__construct($lang->translateString("gui.settings.title"), $lang->translateString("gui.settings.label"),
 			[new MenuOption($lang->translateString("gui.settings.button.settings")), new MenuOption($lang->translateString("gui.sub.title"))],
 			function(Player $player, int $selectedOption) : void {
 				if($selectedOption === 0) {
