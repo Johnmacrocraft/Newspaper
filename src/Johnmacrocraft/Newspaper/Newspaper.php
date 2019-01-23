@@ -253,10 +253,10 @@ class Newspaper extends PluginBase implements Listener {
 	 * @return Config
 	*/
 	public function getPublishedInfo(string $newspaper, string $published) : Config {
-		if(!file_exists(($path = $this->getNewspaperFolder() . strtolower($newspaper) . "/newspaper/" . $published) . ".yml")) {
+		if(!file_exists($path = $this->getNewspaperFolder() . strtolower($newspaper) . "/newspaper/" . $published . ".yml")) {
 			throw new \RuntimeException("Published newspaper info not found");
 		}
-		return new Config("$path.yml", Config::YAML);
+		return new Config($path, Config::YAML);
 	}
 
 	/**
@@ -268,10 +268,10 @@ class Newspaper extends PluginBase implements Listener {
 	 * @return Config
 	 */
 	public function getPublishedPages(string $newspaper, string $published) : Config {
-		if(!file_exists(($path = $this->getNewspaperFolder() . strtolower($newspaper) . "/newspaper/" . $published) . ".dat")) {
+		if(!file_exists($path = $this->getNewspaperFolder() . strtolower($newspaper) . "/newspaper/" . $published . ".dat")) {
 			throw new \RuntimeException("Published newspaper pages not found");
 		}
-		return new Config("$path.dat", Config::SERIALIZED);
+		return new Config($path, Config::SERIALIZED);
 	}
 
 	/**
