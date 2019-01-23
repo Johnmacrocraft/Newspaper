@@ -121,7 +121,7 @@ class Newspaper extends PluginBase implements Listener {
 				$item->setGeneration($newspaperPages->get("generation"));
 
 				if(!$player->getInventory()->canAddItem($item)) {
-					$player->sendMessage(TextFormat::RED . $this->getLanguage(Newspaper::getPlayerData($playerName)->get("lang"))->translateString("main.error.sub.invNoSpace", [$subscription]));
+					$player->sendMessage(TextFormat::RED . $this->getLanguage($this->getPlayerData($playerName)->get("lang"))->translateString("main.error.sub.invNoSpace", [$subscription]));
 					break 2;
 				}
 
