@@ -33,6 +33,9 @@ use spoondetector\SpoonDetector;
 
 class Newspaper extends PluginBase implements Listener {
 
+	/** @var Newspaper|null */
+	private static $instance = null;
+
 	/** @var string */
 	private $dataFolder;
 	/** @var string */
@@ -48,6 +51,8 @@ class Newspaper extends PluginBase implements Listener {
 	private $baseLang_jpn;
 
 	public function onEnable() : void {
+		self::$instance = $this;
+
 		SpoonDetector::printSpoon($this, "spoon.txt");
 
 		$this->dataFolder = $this->getDataFolder();
@@ -98,7 +103,8 @@ class Newspaper extends PluginBase implements Listener {
 		if(!is_file($playerData = $this->getPlayersFolder() . "$playerName.yml")) {
 			new Config($playerData,
 				Config::YAML,
-				["lang" => $this->getConfig()->get("lang"),
+				[
+					"lang" => $this->getConfig()->get("lang"),
 					"autorenew" => $this->getConfig()->get("autorenew"),
 					"subscriptions" => []
 				]
@@ -152,7 +158,8 @@ class Newspaper extends PluginBase implements Listener {
 
 		$info = new Config($newspaperPath . "/info.yml",
 			Config::YAML,
-			["name" => $newspaper,
+			[
+				"name" => $newspaper,
 				"description" => $description,
 				"member" => array_map("strtolower", $member),
 				"icon" => $icon
@@ -181,7 +188,8 @@ class Newspaper extends PluginBase implements Listener {
 
 		$newspaperInfo = new Config("$basePath.yml",
 			Config::YAML,
-			["name" => $newspaper,
+			[
+				"name" => $newspaper,
 				"description" => $description,
 				"author" => $author,
 				"generation" => $generation
@@ -443,10 +451,10 @@ class Newspaper extends PluginBase implements Listener {
 	/**
 	 * Returns this class.
 	 *
-	 * @return Plugin
+	 * @return Newspaper
 	 */
-	public static function getPlugin() : Plugin {
-		return Server::getInstance()->getPluginManager()->getPlugin("Newspaper");
+	public static function getPlugin() : Newspaper {
+		return self::$instance;
 	}
 
 	/**

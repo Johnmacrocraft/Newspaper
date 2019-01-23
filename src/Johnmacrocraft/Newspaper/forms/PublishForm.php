@@ -35,8 +35,10 @@ class PublishForm extends CustomForm {
 
 	public function __construct(string $mainNewspaper, BaseLang $lang) {
 		$this->lang = $lang;
-		parent::__construct($lang->translateString("gui.publish.title"),
-			[new Label("Notice", TextFormat::GOLD . $lang->translateString("gui.publish.label")),
+		parent::__construct(
+			$lang->translateString("gui.publish.title"),
+			[
+				new Label("Notice", TextFormat::GOLD . $lang->translateString("gui.publish.label")),
 				new Input("Name", $lang->translateString("gui.publish.input.name.name"), "Bad Adler32!!"),
 				new Input("Description", $lang->translateString("gui.publish.input.desc.name"), $lang->translateString("gui.publish.input.desc.hint")),
 				new Input("Author", $lang->translateString("gui.publish.input.author.name"), $lang->translateString("gui.publish.input.author.name"))

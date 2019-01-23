@@ -40,8 +40,10 @@ class SettingsListForm extends CustomForm {
 			$this->langList[] = pathinfo($langPath, PATHINFO_FILENAME);
 		}
 		$this->playerData = Newspaper::getPlugin()->getPlayerData($playerName);
-		parent::__construct($lang->translateString("gui.settings.title"),
-			[new Dropdown("Language", $lang->translateString("gui.settingslist.dropdown.lang.name"), $this->langList, array_search($this->playerData->get("lang"), $this->langList)),
+		parent::__construct(
+			$lang->translateString("gui.settings.title"),
+			[
+				new Dropdown("Language", $lang->translateString("gui.settingslist.dropdown.lang.name"), $this->langList, array_search($this->playerData->get("lang"), $this->langList)),
 				new Toggle("Auto_Renew", $lang->translateString("gui.settingslist.toggle.autorenew.name"), $this->playerData->get("autorenew"))
 			],
 			function(Player $player, CustomFormResponse $data) : void {

@@ -30,8 +30,10 @@ class CreateForm extends CustomForm {
 
 	public function __construct(BaseLang $lang) {
 		$this->lang = $lang;
-		parent::__construct($lang->translateString("gui.create.title"),
-			[new Input("Name", $lang->translateString("gui.create.input.name.name"), $lang->translateString("gui.create.input.name.hint")),
+		parent::__construct(
+			$lang->translateString("gui.create.title"),
+			[
+				new Input("Name", $lang->translateString("gui.create.input.name.name"), $lang->translateString("gui.create.input.name.hint")),
 				new Input("Description", $lang->translateString("gui.create.input.desc.name"), $lang->translateString("gui.create.input.desc.hint")),
 				new Input("Member", $lang->translateString("gui.create.input.member.name"), $lang->translateString("gui.create.input.member.hint")),
 				new Input("Icon", $lang->translateString("gui.create.input.iconURL.name"), "https://en.touhouwiki.net/images/b/b4/Th16Aya.png"),
@@ -43,7 +45,8 @@ class CreateForm extends CustomForm {
 					$player->sendMessage(TextFormat::RED . $this->lang->translateString("gui.create.error.alreadyExists"));
 				} else {
 					if(strpbrk($newspaper, "\\/:*?\"<>|") === FALSE && !empty($newspaper)) { //We don't want people trying to use invalid characters on Windows system, or access parent directories
-						Newspaper::getPlugin()->createNewspaper($newspaper,
+						Newspaper::getPlugin()->createNewspaper(
+							$newspaper,
 							$data->getString("Description"),
 							(empty($member = $data->getString("Member")) || !in_array($player->getLowerCaseName(), $memberArray = explode(", ", $member)) ? [$player->getLowerCaseName()] : $memberArray),
 							$data->getString("Icon"),

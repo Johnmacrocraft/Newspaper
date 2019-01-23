@@ -33,9 +33,11 @@ class MyNewspaperInfoForm extends MenuForm {
 	public function __construct(Config $info, BaseLang $lang) {
 		$this->info = $info;
 		$this->lang = $lang;
-		parent::__construct($lang->translateString("gui.newspaperInfo.title", [$info->get("name")]),
+		parent::__construct(
+			$lang->translateString("gui.newspaperInfo.title", [$info->get("name")]),
 			$lang->translateString("gui.newspaperInfo.label", [$info->get("profit")]),
-			[new MenuOption($lang->translateString("gui.newspaperInfo.button.edit")),
+			[
+				new MenuOption($lang->translateString("gui.newspaperInfo.button.edit")),
 				new MenuOption($lang->translateString("gui.newspaperInfo.button.getProfit"))
 			],
 			function(Player $player, int $selectedOption) : void {

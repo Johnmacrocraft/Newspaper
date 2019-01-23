@@ -35,13 +35,25 @@ class BuyInfoForm extends MenuForm {
 	public function __construct(Config $info, BaseLang $lang) {
 		$this->info = $info;
 		$this->lang = $lang;
-		parent::__construct($lang->translateString("gui.buyinfo.title", [$info->get("name")]),
+		parent::__construct(
+			$lang->translateString("gui.buyinfo.title", [$info->get("name")]),
 			$lang->translateString("gui.buyinfo.label.desc", [$info->get("description")]) . TextFormat::EOL .
 			$lang->translateString("gui.buyinfo.label.member", [implode(", ", $info->get("member"))]) . TextFormat::EOL .
 			$lang->translateString("gui.buyinfo.label.priceOne", [$info->get("price")["perOne"]]) . TextFormat::EOL .
 			$lang->translateString("gui.buyinfo.label.priceSub", [$info->get("price")["subscriptions"]]),
-			[new MenuOption($lang->translateString("gui.buyinfo.button.buy", [($monetary = (Newspaper::getPlugin()->canBuyNewspapers() ? Newspaper::getPlugin()->getEconomyAPI()->getMonetaryUnit() : null)) . $info->get("price")["perOne"]])),
-				new MenuOption($lang->translateString("gui.buyinfo.button.subscribe", [$monetary . $info->get("price")["subscriptions"]]))
+			[
+				new MenuOption(
+					$lang->translateString(
+						"gui.buyinfo.button.buy",
+						[($monetary = (Newspaper::getPlugin()->canBuyNewspapers() ? Newspaper::getPlugin()->getEconomyAPI()->getMonetaryUnit() : null)) . $info->get("price")["perOne"]]
+					)
+				),
+				new MenuOption(
+					$lang->translateString(
+						"gui.buyinfo.button.subscribe",
+						[$monetary . $info->get("price")["subscriptions"]]
+					)
+				)
 			],
 			function(Player $player, int $selectedOption) : void {
 				if($selectedOption === 0) {

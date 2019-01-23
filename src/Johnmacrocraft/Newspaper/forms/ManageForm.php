@@ -35,7 +35,10 @@ class ManageForm extends MenuForm {
 				$options[] = new MenuOption($config->get("name"));
 			}
 		}
-		parent::__construct($lang->translateString("gui.manage.title"), $this->lang->translateString("gui.manage.label"), $options,
+		parent::__construct(
+			$lang->translateString("gui.manage.title"),
+			$this->lang->translateString("gui.manage.label"),
+			$options,
 			function(Player $player, int $selectedOption) : void {
 				$player->sendForm(new MyNewspaperInfoForm(Newspaper::getPlugin()->getNewspaperInfo($this->getOption($selectedOption)->getText()), $this->lang));
 			}

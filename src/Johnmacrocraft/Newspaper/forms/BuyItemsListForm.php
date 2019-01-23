@@ -47,7 +47,9 @@ class BuyItemsListForm extends CustomForm {
 				$this->newspapers[] = $newspaperName;
 			}
 		}
-		parent::__construct($lang->translateString("gui.buyitems.title"), $options,
+		parent::__construct(
+			$lang->translateString("gui.buyitems.title"),
+			$options,
 			function(Player $player, CustomFormResponse $data) : void {
 				$selected = [];
 
