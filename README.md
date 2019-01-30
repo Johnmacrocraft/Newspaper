@@ -7,6 +7,7 @@ Currently, Newspaper supports the following languages:
 - English
 - Korean (한국어)
 - Japanese (日本語)
+- German (Deutsch)
 
 If you want to add your languages, you can submit a pull request.<br />
 When you translate, remember the following rules:
