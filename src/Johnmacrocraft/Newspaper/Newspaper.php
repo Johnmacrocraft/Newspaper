@@ -33,8 +33,8 @@ use spoondetector\SpoonDetector;
 
 class Newspaper extends PluginBase implements Listener {
 
-	/** @var Newspaper|null */
-	private static $instance = null;
+	/** @var Newspaper */
+	private static $instance;
 
 	/** @var string */
 	private $dataFolder;
@@ -81,6 +81,7 @@ class Newspaper extends PluginBase implements Listener {
 	 * @param string[] $args
 	 *
 	 * @return bool
+	 * @throws \Exception
 	 */
 	public function onCommand(CommandSender $sender, Command $command, string $label, array $args) : bool {
 		if($command->getName() === "newspaper") {
@@ -176,6 +177,8 @@ class Newspaper extends PluginBase implements Listener {
 	 * @param int $generation
 	 * @param array $contents
 	 * @param bool|null $checkExpired
+	 *
+	 * @throws \Exception
 	 */
 	public function publishNewspaper(string $mainNewspaper, string $newspaper, string $description, string $author, int $generation, array $contents, ?bool $checkExpired = true) : void {
 		$basePath = $this->getNewspaperFolder() . "$mainNewspaper/newspaper/" . strtolower($newspaper);
@@ -297,6 +300,8 @@ class Newspaper extends PluginBase implements Listener {
 	 * @param string $player
 	 * @param string $newspaper
 	 * @param \DateTime $subscribeUntil
+	 *
+	 * @throws \Exception
 	 */
 	public function setSubscription(string $player, string $newspaper, ?\DateTime $subscribeUntil = null) : void {
 		if($subscribeUntil === null) {
@@ -339,6 +344,8 @@ class Newspaper extends PluginBase implements Listener {
 	 *
 	 * @param string $player
 	 * @param string $newspaper
+	 *
+	 * @throws \Exception
 	 */
 	public function renewSubscription(string $player, string $newspaper) : void {
 		if($this->getPlayerData($player)->get("autorenew")) {
@@ -357,6 +364,8 @@ class Newspaper extends PluginBase implements Listener {
 	 * Checks subscriptions and performs actions.
 	 *
 	 * @param array|null $pathArray
+	 *
+	 * @throws \Exception
 	 */
 	public function checkSubscriptions(?array $pathArray = null) : void {
 		if($pathArray === null) {
