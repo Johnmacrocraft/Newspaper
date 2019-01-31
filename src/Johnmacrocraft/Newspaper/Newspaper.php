@@ -26,7 +26,6 @@ use pocketmine\lang\BaseLang;
 use pocketmine\Player;
 use pocketmine\plugin\Plugin;
 use pocketmine\plugin\PluginBase;
-use pocketmine\Server;
 use pocketmine\utils\Config;
 use pocketmine\utils\TextFormat;
 use spoondetector\SpoonDetector;
