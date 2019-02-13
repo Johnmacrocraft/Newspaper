@@ -239,7 +239,6 @@ class Newspaper extends PluginBase implements Listener {
 		if(!file_exists($path)) {
 			throw new \RuntimeException("Newspaper not found");
 		}
-
 		return new Config($path, Config::YAML);
 	}
 
@@ -266,7 +265,6 @@ class Newspaper extends PluginBase implements Listener {
 		if(!file_exists($path)) {
 			throw new \RuntimeException("Published newspaper info not found");
 		}
-
 		return new Config($path, Config::YAML);
 	}
 
@@ -284,7 +282,6 @@ class Newspaper extends PluginBase implements Listener {
 		if(!file_exists($path)) {
 			throw new \RuntimeException("Published newspaper pages not found");
 		}
-
 		return new Config($path, Config::SERIALIZED);
 	}
 
@@ -304,7 +301,6 @@ class Newspaper extends PluginBase implements Listener {
 		$escapedName = str_replace("]", "\]", $escapedName);
 		$escapedName = str_replace("\[", "[[]", $escapedName); //Second checks for brackets
 		$escapedName = str_replace("\]", "[]]", $escapedName);
-
 		return glob($this->getNewspaperFolder() . strtolower($escapedName) . "/newspaper/*.yml");
 	}
 
@@ -409,7 +405,6 @@ class Newspaper extends PluginBase implements Listener {
 		if(!file_exists($path)) {
 			throw new \RuntimeException("Player data not found");
 		}
-
 		return new Config($path, Config::YAML);
 	}
 
@@ -427,7 +422,6 @@ class Newspaper extends PluginBase implements Listener {
 		foreach($array as $sub) {
 			$result = array_merge($result, $sub);
 		}
-
 		return array_keys($result);
 	}
 
@@ -461,10 +455,8 @@ class Newspaper extends PluginBase implements Listener {
 	public function badPerm(Player $player, string $perm, string $action = "main.perm.generic") : bool {
 		if(!$player->hasPermission("newspaper.$perm")) {
 			$player->sendMessage(TextFormat::RED . $this->getLanguage($this->getPlayerData($player->getName())->get("lang"))->translateString("main.perm.base", ["%$action"]));
-
 			return true;
 		}
-
 		return false;
 	}
 
@@ -531,7 +523,6 @@ class Newspaper extends PluginBase implements Listener {
 				}
 			}
 		}
-
 		return $langList;
 	}
 }
