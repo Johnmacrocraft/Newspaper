@@ -55,7 +55,6 @@ class Newspaper extends PluginBase implements Listener {
 		SpoonDetector::printSpoon($this, "spoon.txt");
 
 		$this->dataFolder = $this->getDataFolder();
-
 		if(!is_dir($this->newspaperFolder = $this->dataFolder . "newspapers/")) {
 			mkdir($this->newspaperFolder);
 		}
@@ -100,7 +99,9 @@ class Newspaper extends PluginBase implements Listener {
 	 */
 	public function onPlayerJoin(PlayerJoinEvent $event) : void {
 		$playerName = $event->getPlayer()->getLowerCaseName();
-		if(!is_file($playerData = $this->getPlayersFolder() . "$playerName.yml")) {
+
+		$playerData = $this->getPlayersFolder() . "$playerName.yml";
+		if(!is_file($playerData)) {
 			new Config($playerData, Config::YAML, [
 				"lang" => $this->getConfig()->get("lang"),
 				"autorenew" => $this->getConfig()->get("autorenew"),
@@ -109,7 +110,6 @@ class Newspaper extends PluginBase implements Listener {
 		}
 
 		$subscriptions = $this->getPlayerData($playerName);
-
 		foreach($this->getSubscriptionsArray($subscriptions->getAll()) as $subscription) {
 			$player = $event->getPlayer();
 			$key = "subscriptions.$subscription.queue";
@@ -193,11 +193,15 @@ class Newspaper extends PluginBase implements Listener {
 		if($checkExpired) {
 			$this->checkSubscriptions();
 		}
+
 		foreach(glob($this->getPlayersFolder() . "*.yml") as $playerDataPath) {
 			$playerData = new Config($playerDataPath, Config::YAML);
 
 			if(isset($playerData->getAll()["subscriptions"][$mainNewspaper])) {
-				if(($subscriber = $this->getServer()->getPlayer($subscriberName = pathinfo($playerDataPath, PATHINFO_FILENAME)))->isOnline()) {
+				$subscriberName = pathinfo($playerDataPath, PATHINFO_FILENAME);
+				$subscriber = $this->getServer()->getPlayer($subscriberName);
+
+				if($subscriber->isOnline()) {
 					$item = new WrittenBook;
 					$item->setCount(1);
 					$item->setPages(($newspaperData->getAll()));
@@ -211,8 +215,8 @@ class Newspaper extends PluginBase implements Listener {
 					} else {
 						$subscriber->sendMessage(TextFormat::GOLD . $this->getLanguage($this->getPlayerData($subscriberName)->get("lang"))->translateString("gui.publish.sub.info"));
 					}
-
 				}
+
 				$key = "subscriptions.$mainNewspaper.queue";
 				$queue = $playerData->getNested($key);
 				$queue[] = strtolower($newspaper);
@@ -230,9 +234,12 @@ class Newspaper extends PluginBase implements Listener {
 	 * @return Config
 	 */
 	public function getNewspaperInfo(string $newspaper) : Config {
-		if(!file_exists($path = $this->getNewspaperFolder() . strtolower($newspaper) . "/info.yml")) {
+		$path = $this->getNewspaperFolder() . strtolower($newspaper) . "/info.yml";
+
+		if(!file_exists($path)) {
 			throw new \RuntimeException("Newspaper not found");
 		}
+
 		return new Config($path, Config::YAML);
 	}
 
@@ -254,9 +261,12 @@ class Newspaper extends PluginBase implements Listener {
 	 * @return Config
 	*/
 	public function getPublishedInfo(string $newspaper, string $published) : Config {
-		if(!file_exists($path = $this->getNewspaperFolder() . strtolower($newspaper) . "/newspaper/" . $published . ".yml")) {
+		$path = $this->getNewspaperFolder() . strtolower($newspaper) . "/newspaper/" . $published . ".yml";
+
+		if(!file_exists($path)) {
 			throw new \RuntimeException("Published newspaper info not found");
 		}
+
 		return new Config($path, Config::YAML);
 	}
 
@@ -269,9 +279,12 @@ class Newspaper extends PluginBase implements Listener {
 	 * @return Config
 	 */
 	public function getPublishedPages(string $newspaper, string $published) : Config {
-		if(!file_exists($path = $this->getNewspaperFolder() . strtolower($newspaper) . "/newspaper/" . $published . ".dat")) {
+		$path = $this->getNewspaperFolder() . strtolower($newspaper) . "/newspaper/" . $published . ".dat";
+
+		if(!file_exists($path)) {
 			throw new \RuntimeException("Published newspaper pages not found");
 		}
+
 		return new Config($path, Config::SERIALIZED);
 	}
 
@@ -286,10 +299,12 @@ class Newspaper extends PluginBase implements Listener {
 		if(!file_exists($this->getNewspaperFolder() . strtolower($newspaper))) {
 			throw new \RuntimeException("Newspaper not found");
 		}
+
 		$escapedName = str_replace("[", "\[", $newspaper); //First checks for brackets
 		$escapedName = str_replace("]", "\]", $escapedName);
 		$escapedName = str_replace("\[", "[[]", $escapedName); //Second checks for brackets
 		$escapedName = str_replace("\]", "[]]", $escapedName);
+
 		return glob($this->getNewspaperFolder() . strtolower($escapedName) . "/newspaper/*.yml");
 	}
 
@@ -348,11 +363,11 @@ class Newspaper extends PluginBase implements Listener {
 	 */
 	public function renewSubscription(string $player, string $newspaper) : void {
 		if($this->getPlayerData($player)->get("autorenew")) {
-			if($this->canBuyNewspapers() && ($API = $this->getEconomyAPI())->reduceMoney($player, $this->getNewspaperInfo($newspaper)->getNested("price.subscriptions"), true, "Newspaper") === $API::RET_INVALID) {
+			$API = $this->getEconomyAPI();
+			if($this->canBuyNewspapers() && $API->reduceMoney($player, $this->getNewspaperInfo($newspaper)->getNested("price.subscriptions"), true, "Newspaper") === $API::RET_INVALID) {
 				$this->removeSubscription($player, $newspaper);
 				return;
 			}
-
 			$this->setSubscription($player, $newspaper);
 		} else {
 			$this->removeSubscription($player, $newspaper);
@@ -373,7 +388,6 @@ class Newspaper extends PluginBase implements Listener {
 
 		foreach($pathArray as $dataPath) {
 			$playerData = new Config($dataPath, Config::YAML);
-
 			foreach($this->getSubscriptionsArray($playerData->getAll()) as $subscription) {
 				if(new \DateTime($playerData->getNested("subscriptions." . $subscription . ".subscribeUntil")) < new \DateTime()) {
 					$this->renewSubscription(pathinfo($dataPath, PATHINFO_FILENAME), $subscription);
@@ -390,9 +404,12 @@ class Newspaper extends PluginBase implements Listener {
 	 * @return Config
 	 */
 	public function getPlayerData(string $player) : Config {
-		if(!file_exists($path = $this->getPlayersFolder() . strtolower($player) . ".yml")) {
+		$path = $this->getPlayersFolder() . strtolower($player) . ".yml";
+
+		if(!file_exists($path)) {
 			throw new \RuntimeException("Player data not found");
 		}
+
 		return new Config($path, Config::YAML);
 	}
 
@@ -404,11 +421,13 @@ class Newspaper extends PluginBase implements Listener {
 	 */
 	public function getSubscriptionsArray(array $array) : array {
 		$result = [];
+
 		unset($array["lang"]); //Remove other values that have nothing to do with subscriptions first
 		unset($array["autorenew"]);
 		foreach($array as $sub) {
 			$result = array_merge($result, $sub);
 		}
+
 		return array_keys($result);
 	}
 
@@ -442,8 +461,10 @@ class Newspaper extends PluginBase implements Listener {
 	public function badPerm(Player $player, string $perm, string $action = "main.perm.generic") : bool {
 		if(!$player->hasPermission("newspaper.$perm")) {
 			$player->sendMessage(TextFormat::RED . $this->getLanguage($this->getPlayerData($player->getName())->get("lang"))->translateString("main.perm.base", ["%$action"]));
+
 			return true;
 		}
+
 		return false;
 	}
 
@@ -501,6 +522,7 @@ class Newspaper extends PluginBase implements Listener {
 	 */
 	public function getLanguageList() : array {
 		$langList = []; //From PocketMine
+
 		if(is_dir($this->getLanguageFolder())) {
 			foreach(new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($this->getLanguageFolder())) as $langPath) {
 				if($langPath->isFile()) {

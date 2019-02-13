@@ -39,11 +39,15 @@ class BuyItemsListForm extends CustomForm {
 	public function __construct(Config $info, BaseLang $lang) {
 		$this->info = $info;
 		$this->lang = $lang;
-		if(empty($newspapers = Newspaper::getPlugin()->getAllPublished($info->get("name")))) {
+
+		$newspapers = Newspaper::getPlugin()->getAllPublished($info->get("name"));
+
+		if(empty($newspapers)) {
 			$options[] = new Label("No_Newspapers", $lang->translateString("gui.buyitems.label.noItems"));
 		} else {
 			foreach($newspapers as $newspaper) {
-				$options[] = new Toggle($newspaperName = (new Config($newspaper, Config::YAML))->get("name"), $newspaperName);
+				$newspaperName = (new Config($newspaper, Config::YAML))->get("name");
+				$options[] = new Toggle($newspaperName, $newspaperName);
 				$this->newspapers[] = $newspaperName;
 			}
 		}
@@ -70,7 +74,8 @@ class BuyItemsListForm extends CustomForm {
 				}
 
 				if(Newspaper::getPlugin()->canBuyNewspapers()) {
-					if(($API = Newspaper::getPlugin()->getEconomyAPI())->reduceMoney($player, $price, true, "Newspaper") === $API::RET_INVALID) {
+					$API = Newspaper::getPlugin()->getEconomyAPI();
+					if($API->reduceMoney($player, $price, true, "Newspaper") === $API::RET_INVALID) {
 						$player->sendMessage(TextFormat::RED . $this->lang->translateString("gui.buyitems.error.noMoney", [Newspaper::getPlugin()->getEconomyAPI()->getMonetaryUnit() . ($price - $API->myMoney($player))]));
 						return;
 					}

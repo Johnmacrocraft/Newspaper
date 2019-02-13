@@ -34,6 +34,7 @@ class EditForm extends CustomForm {
 	public function __construct(Config $info, BaseLang $lang) {
 		$this->info = $info;
 		$this->lang = $lang;
+
 		parent::__construct($lang->translateString("gui.edit.title"), [
 			new Label("Name", $info->get("name")),
 			new Input("Description", $lang->translateString("gui.create.input.desc.name"), $lang->translateString("gui.create.input.desc.hint"), $info->get("description")),

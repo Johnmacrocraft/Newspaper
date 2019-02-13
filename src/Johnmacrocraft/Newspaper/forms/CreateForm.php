@@ -30,6 +30,7 @@ class CreateForm extends CustomForm {
 
 	public function __construct(BaseLang $lang) {
 		$this->lang = $lang;
+
 		parent::__construct($lang->translateString("gui.create.title"), [
 			new Input("Name", $lang->translateString("gui.create.input.name.name"), $lang->translateString("gui.create.input.name.hint")),
 			new Input("Description", $lang->translateString("gui.create.input.desc.name"), $lang->translateString("gui.create.input.desc.hint")),
@@ -39,7 +40,8 @@ class CreateForm extends CustomForm {
 			new Input("Price_Subscription", $lang->translateString("gui.create.input.priceSub.name"), "0")
 		],
 			function(Player $player, CustomFormResponse $data) : void {
-				if(is_dir(Newspaper::getPlugin()->getNewspaperFolder() . strtolower($newspaper = $data->getString("Name")))) {
+				$newspaper = $data->getString("Name");
+				if(is_dir(Newspaper::getPlugin()->getNewspaperFolder() . strtolower($newspaper))) {
 					$player->sendMessage(TextFormat::RED . $this->lang->translateString("gui.create.error.alreadyExists"));
 				} else {
 					if(strpbrk($newspaper, "\\/:*?\"<>|") === FALSE && !empty($newspaper)) { //We don't want people trying to use invalid characters on Windows system, or access parent directories

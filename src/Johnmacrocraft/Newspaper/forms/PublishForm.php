@@ -35,6 +35,7 @@ class PublishForm extends CustomForm {
 
 	public function __construct(string $mainNewspaper, BaseLang $lang) {
 		$this->lang = $lang;
+
 		parent::__construct($lang->translateString("gui.publish.title"), [
 			new Label("Notice", TextFormat::GOLD . $lang->translateString("gui.publish.label")),
 			new Input("Name", $lang->translateString("gui.publish.input.name.name"), "Bad Adler32!!"),
@@ -42,19 +43,20 @@ class PublishForm extends CustomForm {
 			new Input("Author", $lang->translateString("gui.publish.input.author.name"), $lang->translateString("gui.publish.input.author.name"))
 		],
 			function(Player $player, CustomFormResponse $data) : void {
-				$getItem = $player->getInventory()->getItemInHand();
+				$heldItem = $player->getInventory()->getItemInHand();
+				$itemId = $heldItem->getId();
 
-				if(($getId = $getItem->getId()) === ItemIds::WRITABLE_BOOK || $getId === ItemIds::WRITTEN_BOOK) {
-					if(is_file(Newspaper::getPlugin()->getNewspaperFolder() . $this->mainNewspaper . "/newspaper/" . (strtolower($newspaper = empty($data->getString("Name")) ? $getItem->getTitle() : $data->getString("Name"))) . ".yml")) {
+				if($itemId === ItemIds::WRITABLE_BOOK || $itemId === ItemIds::WRITTEN_BOOK) {
+					if(is_file(Newspaper::getPlugin()->getNewspaperFolder() . $this->mainNewspaper . "/newspaper/" . (strtolower($newspaper = empty($data->getString("Name")) ? $heldItem->getTitle() : $data->getString("Name"))) . ".yml")) {
 						$player->sendMessage(TextFormat::RED . $this->lang->translateString("gui.create.error.alreadyExists"));
 					} else {
 						if(strpbrk($newspaper, "\\/:*?\"<>|") === FALSE && !empty($newspaper)) { //We don't want people trying to use invalid characters on Windows system, access parent directories, or empty names
 							Newspaper::getPlugin()->publishNewspaper($this->mainNewspaper,
 								$newspaper,
 								$data->getString("Description"),
-								(empty($author = $data->getString("Author")) ? ($getId === ItemIds::WRITTEN_BOOK ? $getItem->getAuthor() : $player->getName()) : $author), //No need to use a lowercased name on here
-								$getItem === ItemIds::WRITTEN_BOOK ?: WrittenBook::GENERATION_ORIGINAL,
-								$getItem->getPages()
+								(empty($author = $data->getString("Author")) ? ($itemId === ItemIds::WRITTEN_BOOK ? $heldItem->getAuthor() : $player->getName()) : $author), //No need to use a lowercased name on here
+								$heldItem === ItemIds::WRITTEN_BOOK ?: WrittenBook::GENERATION_ORIGINAL,
+								$heldItem->getPages()
 							);
 
 							$player->sendMessage(TextFormat::GREEN . $this->lang->translateString("gui.publish.success.publish"));

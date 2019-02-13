@@ -35,6 +35,7 @@ class BuyInfoForm extends MenuForm {
 	public function __construct(Config $info, BaseLang $lang) {
 		$this->info = $info;
 		$this->lang = $lang;
+
 		parent::__construct($lang->translateString("gui.buyinfo.title", [$info->get("name")]),
 			$lang->translateString("gui.buyinfo.label.desc", [$info->get("description")]) . TextFormat::EOL .
 			$lang->translateString("gui.buyinfo.label.member", [implode(", ", $info->get("member"))]) . TextFormat::EOL .
@@ -70,7 +71,8 @@ class BuyInfoForm extends MenuForm {
 					$price = $this->info->get("price")["subscriptions"];
 
 					if(Newspaper::getPlugin()->canBuyNewspapers()) {
-						if(($API = Newspaper::getPlugin()->getEconomyAPI())->reduceMoney($player, $price, true, "Newspaper") === $API::RET_INVALID) {
+						$API = Newspaper::getPlugin()->getEconomyAPI();
+						if($API->reduceMoney($player, $price, true, "Newspaper") === $API::RET_INVALID) {
 							$player->sendMessage(TextFormat::RED . $this->lang->translateString("gui.buyinfo.error.noMoney", [Newspaper::getPlugin()->getEconomyAPI()->getMonetaryUnit() . ($price - $API->myMoney($player))]));
 							return;
 						}

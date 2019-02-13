@@ -30,6 +30,7 @@ class ItemListForm extends MenuForm {
 
 	public function __construct(BaseLang $lang) {
 		$this->lang = $lang;
+
 		foreach(Newspaper::getPlugin()->getAllNewspaperInfo() as $info) {
 			$options[] = new MenuOption((new Config($info, Config::YAML))->get("name"));
 		}
