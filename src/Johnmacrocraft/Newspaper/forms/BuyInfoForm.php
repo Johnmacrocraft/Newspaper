@@ -40,8 +40,7 @@ class BuyInfoForm extends MenuForm {
 			$lang->translateString("gui.buyinfo.label.desc", [$info->get("description")]) . TextFormat::EOL .
 			$lang->translateString("gui.buyinfo.label.member", [implode(", ", $info->get("member"))]) . TextFormat::EOL .
 			$lang->translateString("gui.buyinfo.label.priceOne", [$info->get("price")["perOne"]]) . TextFormat::EOL .
-			$lang->translateString("gui.buyinfo.label.priceSub", [$info->get("price")["subscriptions"]]),
-			[
+			$lang->translateString("gui.buyinfo.label.priceSub", [$info->get("price")["subscriptions"]]), [
 				new MenuOption($lang->translateString(
 					"gui.buyinfo.button.buy",
 					[($monetary = (Newspaper::getPlugin()->canBuyNewspapers() ? Newspaper::getPlugin()->getEconomyAPI()->getMonetaryUnit() : null)) . $info->get("price")["perOne"]]
