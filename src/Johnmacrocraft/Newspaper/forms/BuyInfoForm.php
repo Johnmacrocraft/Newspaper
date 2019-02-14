@@ -36,6 +36,7 @@ class BuyInfoForm extends MenuForm {
 		$this->info = $info;
 		$this->lang = $lang;
 
+		$monetary = Newspaper::getPlugin()->canBuyNewspapers() ? Newspaper::getPlugin()->getEconomyAPI()->getMonetaryUnit() : null;
 		parent::__construct($lang->translateString("gui.buyinfo.title", [$info->get("name")]),
 			$lang->translateString("gui.buyinfo.label.desc", [$info->get("description")]) . TextFormat::EOL .
 			$lang->translateString("gui.buyinfo.label.member", [implode(", ", $info->get("member"))]) . TextFormat::EOL .
@@ -43,7 +44,7 @@ class BuyInfoForm extends MenuForm {
 			$lang->translateString("gui.buyinfo.label.priceSub", [$info->get("price")["subscriptions"]]), [
 				new MenuOption($lang->translateString(
 					"gui.buyinfo.button.buy",
-					[($monetary = (Newspaper::getPlugin()->canBuyNewspapers() ? Newspaper::getPlugin()->getEconomyAPI()->getMonetaryUnit() : null)) . $info->get("price")["perOne"]]
+					[$monetary . $info->get("price")["perOne"]]
 				)),
 				new MenuOption($lang->translateString(
 					"gui.buyinfo.button.subscribe",
@@ -61,8 +62,9 @@ class BuyInfoForm extends MenuForm {
 					}
 
 					$newspaper = strtolower($this->info->get("name"));
+					$playerData = Newspaper::getPlugin()->getPlayerData($player->getName());
 
-					if(isset(Newspaper::getPlugin()->getPlayerData($player->getName())->getAll()["subscriptions"][$newspaper])) {
+					if(isset($playerData->getAll()["subscriptions"][$newspaper])) {
 						$player->sendMessage(TextFormat::RED . $this->lang->translateString("gui.buyinfo.error.alreadySubscribe"));
 						return;
 					}
@@ -106,6 +108,8 @@ class BuyInfoForm extends MenuForm {
 							$player->getInventory()->addItem($item);
 						}
 					}
+
+					$playerData->setNested("subscriptions.$newspaper.queue", $queue);
 
 					$player->sendMessage(TextFormat::GREEN . $this->lang->translateString("gui.buyinfo.success.subscribe", [$this->info->get("name")]));
 				}

@@ -41,6 +41,8 @@ class CreateForm extends CustomForm {
 		],
 			function(Player $player, CustomFormResponse $data) : void {
 				$newspaper = $data->getString("Name");
+				$member = $data->getString("Member");
+				$memberArray = explode(", ", $member);
 				if(is_dir(Newspaper::getPlugin()->getNewspaperFolder() . strtolower($newspaper))) {
 					$player->sendMessage(TextFormat::RED . $this->lang->translateString("gui.create.error.alreadyExists"));
 				} else {
@@ -48,7 +50,7 @@ class CreateForm extends CustomForm {
 						Newspaper::getPlugin()->createNewspaper(
 							$newspaper,
 							$data->getString("Description"),
-							(empty($member = $data->getString("Member")) || !in_array($player->getLowerCaseName(), $memberArray = explode(", ", $member)) ? [$player->getLowerCaseName()] : $memberArray),
+							(empty($member) || !in_array($player->getLowerCaseName(), $memberArray) ? [$player->getLowerCaseName()] : $memberArray),
 							$data->getString("Icon"),
 							(int) $data->getString("Price_PerOne"),
 							(int) $data->getString("Price_Subscription")

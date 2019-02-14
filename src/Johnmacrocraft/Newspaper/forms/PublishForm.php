@@ -51,10 +51,11 @@ class PublishForm extends CustomForm {
 						$player->sendMessage(TextFormat::RED . $this->lang->translateString("gui.create.error.alreadyExists"));
 					} else {
 						if(strpbrk($newspaper, "\\/:*?\"<>|") === FALSE && !empty($newspaper)) { //We don't want people trying to use invalid characters on Windows system, access parent directories, or empty names
+							$author = $data->getString("Author");
 							Newspaper::getPlugin()->publishNewspaper($this->mainNewspaper,
 								$newspaper,
 								$data->getString("Description"),
-								(empty($author = $data->getString("Author")) ? ($itemId === ItemIds::WRITTEN_BOOK ? $heldItem->getAuthor() : $player->getName()) : $author), //No need to use a lowercased name on here
+								(empty($author) ? ($itemId === ItemIds::WRITTEN_BOOK ? $heldItem->getAuthor() : $player->getName()) : $author), //No need to use a lowercased name on here
 								$heldItem === ItemIds::WRITTEN_BOOK ?: WrittenBook::GENERATION_ORIGINAL,
 								$heldItem->getPages()
 							);

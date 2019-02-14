@@ -98,24 +98,25 @@ class Newspaper extends PluginBase implements Listener {
 	 * @priority MONITOR
 	 */
 	public function onPlayerJoin(PlayerJoinEvent $event) : void {
-		$playerName = $event->getPlayer()->getLowerCaseName();
+		$player = $event->getPlayer();
 
-		$playerData = $this->getPlayersFolder() . "$playerName.yml";
-		if(!is_file($playerData)) {
-			new Config($playerData, Config::YAML, [
+		$playerDataPath = $this->getPlayersFolder() . $player->getLowerCaseName() . ".yml";
+		if(!is_file($playerDataPath)) {
+			new Config($playerDataPath, Config::YAML, [
 				"lang" => $this->getConfig()->get("lang"),
 				"autorenew" => $this->getConfig()->get("autorenew"),
 				"subscriptions" => []
 			]);
 		}
 
-		$subscriptions = $this->getPlayerData($playerName);
-		foreach($this->getSubscriptionsArray($subscriptions->getAll()) as $subscription) {
-			$player = $event->getPlayer();
+		$playerData = $this->getPlayerData($player->getLowerCaseName());
+		foreach($this->getSubscriptionsArray($playerData->getAll()) as $subscription) {
 			$key = "subscriptions.$subscription.queue";
-			foreach($queue = $subscriptions->getNested($key) as $newspaper) {
+			$queue = $playerData->getNested($key);
+			foreach($queue as $newspaper) {
 				$newspaperInfo = $this->getPublishedInfo($subscription, $newspaper);
 				$newspaperPages = $this->getPublishedPages($subscription, $newspaper);
+
 				$item = new WrittenBook;
 				$item->setCount(1);
 				$item->setPages($newspaperInfo->getAll());
@@ -124,17 +125,17 @@ class Newspaper extends PluginBase implements Listener {
 				$item->setGeneration($newspaperPages->get("generation"));
 
 				if(!$player->getInventory()->canAddItem($item)) {
-					$player->sendMessage(TextFormat::RED . $this->getLanguage($this->getPlayerData($playerName)->get("lang"))->translateString("main.error.sub.invNoSpace", [$subscription]));
+					$player->sendMessage(TextFormat::RED . $this->getLanguage($this->getPlayerData($player->getLowerCaseName())->get("lang"))->translateString("main.error.sub.invNoSpace", [$subscription]));
 					break 2;
 				}
 
 				$player->getInventory()->addItem($item);
 
 				unset($queue[array_search($newspaper, $queue)]);
-				$subscriptions->setNested($key, array_values($queue));
+				$playerData->setNested($key, array_values($queue));
 			}
 		}
-		$subscriptions->save();
+		$playerData->save();
 	}
 
 	/**

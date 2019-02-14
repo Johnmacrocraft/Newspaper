@@ -45,10 +45,11 @@ class EditForm extends CustomForm {
 		],
 			function(Player $player, CustomFormResponse $data) : void {
 				$profit = $this->info->get("profit"); //Copy profit value before setting data so that we don't lose it
+				$member = $data->getString("Member");
 				$this->info->setAll([
 					"name" => $this->info->get("name"),
 					"description" => $data->getString("Description"),
-					"member" => (empty($member = $data->getString("Member")) ? [$player->getLowerCaseName()] : array_map("strtolower", explode(", ", $member))), //Players can retire from newspapers, so we don't check if their name is in the list
+					"member" => (empty($member) ? [$player->getLowerCaseName()] : array_map("strtolower", explode(", ", $member))), //Players can retire from newspapers, so we don't check if their name is in the list
 					"icon" => $data->getString("Icon")
 				]);
 				$this->info->setNested("price.perOne", (int) $data->getString("Price_PerOne"));
